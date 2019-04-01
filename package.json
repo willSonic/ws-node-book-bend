@@ -2,10 +2,10 @@
   "name": "ws-node-demo-book-bend",
   "version": "2.0.0",
   "description": "Based on ws-node-demo, add records for handling book repository application ",
-  "author": "Will Streeter <willstreeter@gmail.com> (http://www.willstreeter.com)",
+  "author": "Will Streeter <will.streeter@nocsonic.com> (http://www.willstreeter.com)",
   "license": "MIT",
   "repository": {
-    "url": "https://github.com/WillStreeter/ws-node-demo"
+    "url": "https://github.com/willSonic/ws-node-book-end"
   },
   "scripts": {
     "check": "npm-check --skip-unused",
