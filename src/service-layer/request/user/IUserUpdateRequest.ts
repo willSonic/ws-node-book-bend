@@ -1,8 +1,8 @@
 export interface IUserUpdateRequest{
   id?:string,
-  username?: string;
-  firstname?: string;
-  lastname?: string;
+  userName?: string;
+  firstName?: string;
+  lastName?: string;
   email?: string;
   admin?: boolean;
 }

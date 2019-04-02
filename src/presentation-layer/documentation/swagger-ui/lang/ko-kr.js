@@ -31,7 +31,7 @@ window.SwaggerTranslator.learn({
     "Model Schema":"모델 스키마",
     "Model":"모델",
     "apply":"적용",
-    "Username":"사용자 이름",
+    "userName":"사용자 이름",
     "Password":"암호",
     "Terms of service":"이용약관",
     "Created by":"작성자",

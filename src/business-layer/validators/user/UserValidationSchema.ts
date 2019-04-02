@@ -5,7 +5,7 @@ export class UserValidationSchema  {
 
      @Length(5, 15)
      @IsAlphanumeric()
-     username: string;
+     userName: string;
 
 
      @Length(2, 15)
@@ -14,21 +14,21 @@ export class UserValidationSchema  {
 
      @Length(2, 15)
      @IsAlpha()
-     firstname: string;
+     firstName: string;
 
 
      @Length(2, 15)
      @IsAlpha()
-     lastname: string;
+     lastName: string;
 
      @IsEmail()
      email: string;
 
     constructor(userInfo:any){
-       this.username = userInfo.username;
+       this.userName = userInfo.userName;
        this.password = userInfo.password;
-       this.firstname = userInfo.firstname;
-       this.lastname= userInfo.lastname;
+       this.firstName = userInfo.firstName;
+       this.lastName= userInfo.lastName;
        this.email= userInfo.email;
 
     }

@@ -70,10 +70,10 @@ this["Handlebars"]["templates"]["basic_auth"] = Handlebars.template({"1":functio
   },"3":function(depth0,helpers,partials,data) {
   var helper, functionType="function", helperMissing=helpers.helperMissing, escapeExpression=this.escapeExpression;
   return "                <span class=\"basic_auth__value\">"
-    + escapeExpression(((helper = (helper = helpers.username || (depth0 != null ? depth0.username : depth0)) != null ? helper : helperMissing),(typeof helper === functionType ? helper.call(depth0, {"name":"username","hash":{},"data":data}) : helper)))
+    + escapeExpression(((helper = (helper = helpers.userName || (depth0 != null ? depth0.userName : depth0)) != null ? helper : helperMissing),(typeof helper === functionType ? helper.call(depth0, {"name":"userName","hash":{},"data":data}) : helper)))
     + "</span>\n";
 },"5":function(depth0,helpers,partials,data) {
-  return "                <input required placeholder=\"username\" class=\"basic_auth__username auth_input\" name=\"username\" type=\"text\"/>\n";
+  return "                <input required placeholder=\"userName\" class=\"basic_auth__username auth_input\" name=\"userName\" type=\"text\"/>\n";
   },"7":function(depth0,helpers,partials,data) {
   return "            <div class=\"auth_label\">\n                <span class=\"basic_auth__label\" data-sw-translate>password:</span>\n                <input required placeholder=\"password\" class=\"basic_auth__password auth_input\" name=\"password\" type=\"password\"/></label>\n            </div>\n";
   },"compiler":[6,">= 2.0.0-beta.1"],"main":function(depth0,helpers,partials,data) {
@@ -82,7 +82,7 @@ this["Handlebars"]["templates"]["basic_auth"] = Handlebars.template({"1":functio
   if (stack1 != null) { buffer += stack1; }
   buffer += "</h3>\n    <form class=\"basic_input_container\">\n        <div class=\"auth__description\">"
     + escapeExpression(((helper = (helper = helpers.description || (depth0 != null ? depth0.description : depth0)) != null ? helper : helperMissing),(typeof helper === functionType ? helper.call(depth0, {"name":"description","hash":{},"data":data}) : helper)))
-    + "</div>\n        <div class=\"auth_label\">\n            <span class=\"basic_auth__label\" data-sw-translate>username:</span>\n";
+    + "</div>\n        <div class=\"auth_label\">\n            <span class=\"basic_auth__label\" data-sw-translate>userName:</span>\n";
   stack1 = helpers['if'].call(depth0, (depth0 != null ? depth0.isLogout : depth0), {"name":"if","hash":{},"fn":this.program(3, data),"inverse":this.program(5, data),"data":data});
   if (stack1 != null) { buffer += stack1; }
   buffer += "        </div>\n";
@@ -1230,19 +1230,19 @@ CookieAuthorization.prototype.apply = function (obj) {
 /**
  * Password Authorization is a basic auth implementation
  */
-var PasswordAuthorization = module.exports.PasswordAuthorization = function (username, password) {
+var PasswordAuthorization = module.exports.PasswordAuthorization = function (userName, password) {
   if (arguments.length === 3) {
-    helpers.log('PasswordAuthorization: the \'name\' argument has been removed, pass only username and password');
-    username = arguments[1];
+    helpers.log('PasswordAuthorization: the \'name\' argument has been removed, pass only userName and password');
+    userName = arguments[1];
     password = arguments[2];
   }
-  this.username = username;
+  this.userName = userName;
   this.password = password;
 };
 
 PasswordAuthorization.prototype.apply = function (obj) {
   if(typeof obj.headers.Authorization === 'undefined') {
-    obj.headers.Authorization = 'Basic ' + btoa(this.username + ':' + this.password);
+    obj.headers.Authorization = 'Basic ' + btoa(this.userName + ':' + this.password);
   }
 
   return true;
@@ -2721,7 +2721,7 @@ Resolver.prototype.finish = function (spec, root, resolutionTable, resolvedRefs,
 
         for (key in resolvedTo.obj) {
           var abs = resolvedTo.obj[key];
-          
+
           if (localResolve !== true) {
             // don't retain root for local definitions
             abs = this.retainRoot(resolvedTo.obj[key], item.root);
@@ -18275,7 +18275,7 @@ Request.prototype.type = function(type){
 };
 
 /**
- * Set responseType to `val`. Presently valid responseTypes are 'blob' and 
+ * Set responseType to `val`. Presently valid responseTypes are 'blob' and
  * 'arraybuffer'.
  *
  * Examples:
@@ -18343,7 +18343,7 @@ Request.prototype.auth = function(user, pass, options){
     break;
 
     case 'auto':
-      this.username = user;
+      this.userName = user;
       this.password = pass;
     break;
   }
@@ -18618,8 +18618,8 @@ Request.prototype.end = function(fn){
   }
 
   // initiate request
-  if (this.username && this.password) {
-    xhr.open(this.method, this.url, true, this.username, this.password);
+  if (this.userName && this.password) {
+    xhr.open(this.method, this.url, true, this.userName, this.password);
   } else {
     xhr.open(this.method, this.url, true);
   }
@@ -19164,7 +19164,7 @@ Emitter.prototype.hasListeners = function(event){
  * TODO: combatible error handling?
  */
 
-module.exports = function(arr, fn, initial){  
+module.exports = function(arr, fn, initial){
   var idx = 0;
   var len = arr.length;
   var curr = arguments.length == 3
@@ -19174,7 +19174,7 @@ module.exports = function(arr, fn, initial){
   while (idx < len) {
     curr = fn.call(null, curr, arr[idx], ++idx, arr);
   }
-  
+
   return curr;
 };
 },{}]},{},[1])(1)
@@ -19767,7 +19767,7 @@ SwaggerUi.Collections.AuthsCollection = Backbone.Collection.extend({
         var authz = Object.assign({}, window.swaggerUi.api.clientAuthorizations.authz);
 
         return _.map(data, function (auth, name) {
-            var isBasic = authz[name] && auth.type === 'basic' && authz[name].username && authz[name].password;
+            var isBasic = authz[name] && auth.type === 'basic' && authz[name].userName && authz[name].password;
 
             _.extend(auth, {
                 title: name
@@ -19777,7 +19777,7 @@ SwaggerUi.Collections.AuthsCollection = Backbone.Collection.extend({
                 _.extend(auth, {
                     isLogout: true,
                     value: isBasic ? undefined : authz[name].value,
-                    username: isBasic ? authz[name].username : undefined,
+                    userName: isBasic ? authz[name].userName : undefined,
                     password: isBasic ? authz[name].password : undefined,
                     valid: true
                 });
@@ -19913,7 +19913,7 @@ SwaggerUi.Views.AuthView = Backbone.View.extend({
 
                 this.router.api.clientAuthorizations.add(auth.get('title'), keyAuth);
             } else if (type === 'basic') {
-                basicAuth = new SwaggerClient.PasswordAuthorization(auth.get('username'), auth.get('password'));
+                basicAuth = new SwaggerClient.PasswordAuthorization(auth.get('userName'), auth.get('password'));
                 this.router.api.clientAuthorizations.add(auth.get('title'), basicAuth);
             } else if (type === 'oauth2') {
                 this.handleOauth2Login(auth);
@@ -20024,7 +20024,7 @@ SwaggerUi.Views.AuthView = Backbone.View.extend({
 
 SwaggerUi.Models.BasicAuthModel = Backbone.Model.extend({
     defaults: {
-        username: '',
+        userName: '',
         password: '',
         title: 'basic'
     },
@@ -20034,7 +20034,7 @@ SwaggerUi.Models.BasicAuthModel = Backbone.Model.extend({
     },
 
     validate: function () {
-        var valid = !!this.get('password') && !!this.get('username');
+        var valid = !!this.get('password') && !!this.get('userName');
 
         this.set('valid', valid);
 
@@ -20088,7 +20088,7 @@ SwaggerUi.Views.BasicAuthView = Backbone.View.extend({
     },
 
     highlightInvalid: function () {
-        if (!this.model.get('username')) {
+        if (!this.model.get('userName')) {
             this.$(this.selectors.usernameInput).addClass(this.cls.error);
         }
     }

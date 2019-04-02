@@ -1,3 +1,3 @@
-export { IUserCreateRequest } from './IUserCreateRequest';
-export { IUserUpdateRequest } from './IUserUpdateRequest';
-export { IUserLoginRequest }  from './IUserLoginRequest';
+export { IUserCreateRequest } from './user/IUserCreateRequest';
+export { IUserUpdateRequest } from './user/IUserUpdateRequest';
+export { IUserLoginRequest }  from './user/IUserLoginRequest';

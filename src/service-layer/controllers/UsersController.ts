@@ -48,7 +48,7 @@ export class UsersController extends Controller{
     @Get('{userId}')
     public async GetUserById(userId: string, @Header('x-access-token') authentication: string ): Promise<IUserResponse> {
        let result = await this.userDataAgent.getUserById(userId);
-       if( result && result.username){
+       if( result && result.userName){
               var aUser = new UserModel(result);
                return <IUserResponse>(aUser.getClientUserModel());
        }else{
@@ -68,10 +68,10 @@ export class UsersController extends Controller{
 
 
     @Response<IErrorResponse>('404','no such user exist' )
-    @Get('username/{username}')
-    public async GetUserByUsername( @Path() username: string): Promise<IUserResponse> {
-        let result = await this.userDataAgent.getByUsername(username)
-        if( result && result.username){
+    @Get('userName/{userName}')
+    public async GetUserByUsername( @Path() userName: string): Promise<IUserResponse> {
+        let result = await this.userDataAgent.getByUsername(userName)
+        if( result && result.userName){
                var aUser = new UserModel(result);
                return <IUserResponse>( {user:aUser.getClientUserModel()});
         }else{

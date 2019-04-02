@@ -1,7 +1,7 @@
 export interface IUserCreateRequest{
-  username: string;
-  firstname: string;
-  lastname: string;
+  userName: string;
+  firstName: string;
+  lastName: string;
   password:string;
   email: string;
 }

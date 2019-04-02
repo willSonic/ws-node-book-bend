@@ -1,18 +1,15 @@
-
 import mongoose = require('mongoose');
-import { UserRepo, UserSchema, IUserDocument} from '../data-abstracts/repositories/user/index';
+import { UserRepo, UserSchema, IUserDocument} from '../data-abstracts/repositories/user';
 import { logger } from '../../middleware/common/logging';
 
 
 export class UserDataAgent{
 
-
   async createNewUser(user:any):Promise<any> {
-
       let newUser = <IUserDocument>(user);
-      let previouseUser =  await UserRepo.findOne({ username : newUser.username});
-      if(previouseUser){
-         return  {thrown:true, success:false, status:409,  message: "username is already in use"};
+      let previousUser =  await UserRepo.findOne({ userName : newUser.userName});
+      if(previousUser){
+         return  {thrown:true, success:false, status:409,  message: "userName is already in use"};
       }
       newUser.isLoggedIn = true;
       let newUserResult =  await UserRepo.create(newUser);
@@ -24,13 +21,13 @@ export class UserDataAgent{
 
 
   async getAuthorizedUser(auth:any):Promise<any> {
-      let authorizedUserResult = await UserRepo.findOne({ username:auth.username});
+      let authorizedUserResult = await UserRepo.findOne({ userName:auth.userName});
       if(!authorizedUserResult){
-            return  {thrown:true, status:401,  message: "no username "+auth.username+" currently exist"};
+            return  {thrown:true, status:401,  message: "no userName "+auth.userName+" currently exist"};
       }
       let passwordsMatch =   await UserSchema.methods.comparePassword( auth.password, authorizedUserResult);
       if(!passwordsMatch){
-            return  {thrown:true, status:401,  message: "username or password is incorrect"};
+            return  {thrown:true, status:401,  message: "userName or password is incorrect"};
 
       }
       var userProfile = <IUserDocument>authorizedUserResult;
@@ -44,10 +41,9 @@ export class UserDataAgent{
 
 
   async getByUsername(userName:string):Promise<any> {
-      let authUser =  await UserRepo.findOne({ username : userName});
-
+      let authUser =  await UserRepo.findOne({ userName : userName});
       if(!authUser){
-            return  {thrown:true, status:404,  message: "username does not exit"};
+            return  {thrown:true, status:404,  message: "userName does not exit"};
       }
       return authUser;
   }

@@ -33,7 +33,7 @@ window.SwaggerTranslator.learn({
     "Model":"მოდელი",
     "Click to set as parameter value":"პარამეტრისთვის მნიშვნელობის მისანიჭებლად, დააკლიკე",
     "apply":"გამოყენება",
-    "Username":"მოხმარებელი",
+    "userName":"მოხმარებელი",
     "Password":"პაროლი",
     "Terms of service":"მომსახურების პირობები",
     "Created by":"შექმნა",

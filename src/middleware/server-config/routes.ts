@@ -9,15 +9,15 @@ const models: TsoaRoute.Models = {
     "IUserResponse": {
         "properties": {
             "id": { "dataType": "string" },
-            "username": { "dataType": "string" },
-            "firstname": { "dataType": "string" },
-            "lastname": { "dataType": "string" },
+            "userName": { "dataType": "string" },
+            "firstName": { "dataType": "string" },
+            "lastName": { "dataType": "string" },
             "email": { "dataType": "string" },
         },
     },
     "IUserLoginRequest": {
         "properties": {
-            "username": { "dataType": "string", "required": true },
+            "userName": { "dataType": "string", "required": true },
             "password": { "dataType": "string", "required": true },
         },
     },
@@ -29,9 +29,9 @@ const models: TsoaRoute.Models = {
     },
     "IUserCreateRequest": {
         "properties": {
-            "username": { "dataType": "string", "required": true },
-            "firstname": { "dataType": "string", "required": true },
-            "lastname": { "dataType": "string", "required": true },
+            "userName": { "dataType": "string", "required": true },
+            "firstName": { "dataType": "string", "required": true },
+            "lastName": { "dataType": "string", "required": true },
             "password": { "dataType": "string", "required": true },
             "email": { "dataType": "string", "required": true },
         },
@@ -45,9 +45,9 @@ const models: TsoaRoute.Models = {
     "IUserUpdateRequest": {
         "properties": {
             "id": { "dataType": "string" },
-            "username": { "dataType": "string" },
-            "firstname": { "dataType": "string" },
-            "lastname": { "dataType": "string" },
+            "userName": { "dataType": "string" },
+            "firstName": { "dataType": "string" },
+            "lastName": { "dataType": "string" },
             "email": { "dataType": "string" },
             "admin": { "dataType": "boolean" },
         },
@@ -97,7 +97,7 @@ export function RegisterRoutes(app: express.Express) {
     app.post('/api/Users',
         function(request: any, response: any, next: any) {
             const args = {
-                request: { "in": "body", "name": "request", "required": true, "ref": "IUserCreateRequest" },
+                request: { "in": "body", "name": "request", "required": true, "ref": "IInventoryCreateRequest" },
             };
 
             let validatedArgs: any[] = [];
@@ -134,10 +134,10 @@ export function RegisterRoutes(app: express.Express) {
             const promise = controller.GetUserById.apply(controller, validatedArgs as any);
             promiseHandler(controller, promise, response, next);
         });
-    app.get('/api/Users/username/:username',
+    app.get('/api/Users/userName/:userName',
         function(request: any, response: any, next: any) {
             const args = {
-                username: { "in": "path", "name": "username", "required": true, "dataType": "string" },
+                userName: { "in": "path", "name": "userName", "required": true, "dataType": "string" },
             };
 
             let validatedArgs: any[] = [];
@@ -156,7 +156,7 @@ export function RegisterRoutes(app: express.Express) {
     app.patch('/api/Users',
         function(request: any, response: any, next: any) {
             const args = {
-                request: { "in": "body", "name": "request", "required": true, "ref": "IUserUpdateRequest" },
+                request: { "in": "body", "name": "request", "required": true, "ref": "IInventoryUpdateRequest" },
             };
 
             let validatedArgs: any[] = [];

@@ -15,8 +15,8 @@ const SALT_WORK_FACTOR = 10;
  * @private
  */
 let UserSchema:Schema = new Schema({
-  username:  {
-                type: String,
+  userName:  {
+                  type: String,
                   trim: true,
                   required: true,
                   index: {unique: true, dropDups: true}
@@ -27,12 +27,12 @@ let UserSchema:Schema = new Schema({
                 required: true
              },
 
-  firstname: {
+  firstName: {
                 type: String,
                 required: true
              },
 
-  lastname:  {
+  lastName:  {
                 type: String,
                 required: true
              },

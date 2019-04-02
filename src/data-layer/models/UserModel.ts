@@ -14,8 +14,8 @@ export class UserModel {
     return (this._useModel.id).toString();
   }
 
-  get username(): string {
-    return this._useModel.username;
+  get userName(): string {
+    return this._useModel.userName;
   }
 
 
@@ -23,13 +23,13 @@ export class UserModel {
     return this._useModel.password;
   }
 
-  get firstname(): string {
-    return this._useModel.firstname;
+  get firstName(): string {
+    return this._useModel.firstName;
   }
 
 
-  get lastname(): string {
-    return this._useModel.lastname;
+  get lastName(): string {
+    return this._useModel.lastName;
   }
 
   get email(): string {
@@ -59,9 +59,9 @@ export class UserModel {
   getClientUserModel(){
      return Object.seal({
                               id: (this._useModel.id).toString(),
-                              username: this._useModel.username,
-                              firstname: this._useModel.firstname,
-                              lastname: this._useModel.lastname,
+                              userName: this._useModel.userName,
+                              firstName: this._useModel.firstName,
+                              lastName: this._useModel.lastName,
                               email: this._useModel.email
                         })
   }
@@ -69,10 +69,10 @@ export class UserModel {
    getAdminUserModel(){
      return Object.seal({
                               id: (this._useModel.id).toString(),
-                              username: this._useModel.username,
+                              userName: this._useModel.userName,
                               password:this._useModel.password,
-                              firstname: this._useModel.firstname,
-                              lastname: this._useModel.lastname,
+                              firstName: this._useModel.firstName,
+                              lastName: this._useModel.lastName,
                               email: this._useModel.email,
                               admin: this._useModel.admin,
                               isLoggedIn: this._useModel.isLoggedIn,

@@ -31,7 +31,7 @@ window.SwaggerTranslator.learn({
     "Model Schema":"Model Şema",
     "Model":"Model",
     "apply":"uygula",
-    "Username":"Kullanıcı Adı",
+    "userName":"Kullanıcı Adı",
     "Password":"Parola",
     "Terms of service":"Servis şartları",
     "Created by":"Oluşturan",

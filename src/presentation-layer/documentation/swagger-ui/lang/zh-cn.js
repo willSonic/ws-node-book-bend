@@ -31,7 +31,7 @@ window.SwaggerTranslator.learn({
     "Model Schema":"模型架构",
     "Model":"模型",
     "apply":"应用",
-    "Username":"用户名",
+    "userName":"用户名",
     "Password":"密码",
     "Terms of service":"服务条款",
     "Created by":"创建者",

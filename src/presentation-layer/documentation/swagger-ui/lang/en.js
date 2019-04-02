@@ -33,7 +33,7 @@ window.SwaggerTranslator.learn({
     "Model":"Model",
     "Click to set as parameter value":"Click to set as parameter value",
     "apply":"apply",
-    "Username":"Username",
+    "userName":"userName",
     "Password":"Password",
     "Terms of service":"Terms of service",
     "Created by":"Created by",

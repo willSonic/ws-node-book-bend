@@ -1,0 +1,8 @@
+
+export interface IUserResponse{
+  id?:string;
+  userName?: string;
+  firstName?: string;
+  lastName?: string;
+  email?: string;
+}
