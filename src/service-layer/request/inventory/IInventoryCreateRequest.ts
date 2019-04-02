@@ -1,7 +1,8 @@
 export interface IInventoryCreateRequest{
-  userName: string;
-  firstName: string;
-  lastName: string;
-  password:string;
-  email: string;
+  bookRef: string;
+  currentUserRef: string;
+  available: boolean,
+  checkOutDate: string;
+  returnDate: string;
+  waitList:Array<any>;
 }

@@ -4,7 +4,7 @@ export interface IInventoryDocument extends Document {
   id: string,
   bookRef: string
   currentUserRef:string,
-  availStatus: boolean,
+  available: boolean,
   checkOutDate: Date,
   returnDate: Date,
   waitList: [{

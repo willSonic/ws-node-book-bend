@@ -23,8 +23,8 @@ export class InventoryModel {
     return this._inventoryModel.currentUserRef;
   }
 
-  get availStatus(): boolean {
-    return this._inventoryModel.availStatus;
+  get available(): boolean {
+    return this._inventoryModel.available;
   }
 
 

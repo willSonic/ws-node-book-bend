@@ -16,7 +16,7 @@ const InventorySchema:Schema = new Schema({
         ref: 'User',
         required: true,
       },
-  availStatus: {
+  available: {
         type: Boolean,
         default:false,
        },

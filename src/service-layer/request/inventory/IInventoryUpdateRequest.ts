@@ -1,8 +1,9 @@
 export interface IInventoryUpdateRequest{
-  id?:string,
-  userName?: string;
-  firstName?: string;
-  lastName?: string;
-  email?: string;
-  admin?: boolean;
+  id:string,
+  bookRef?: string;
+  currentUserRef?: string;
+  available?: boolean,
+  checkOutDate?: string;
+  returnDate?: string;
+  waitList?: Array<any>;
 }
