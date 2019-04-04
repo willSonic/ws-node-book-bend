@@ -1,4 +1,7 @@
 import { Schema } from "mongoose";
+import { IUserDocument, UserSchema } from '../user';
+import * as Bcrypt from 'bcrypt-nodejs';
+import { ICommentDocument } from './ICommentDocument';
 
 /**
  * MongooseSchema
@@ -6,10 +9,8 @@ import { Schema } from "mongoose";
  * @private
  */
 const CommentSchema:Schema = new Schema({
-
   text: {
-     maxlength: 600,
-     minlength: 5,
+     type: String,
      required: true,
      trim: true,
   },
@@ -33,6 +34,22 @@ const CommentSchema:Schema = new Schema({
 	   default : Date.now
   }
 
+});
+
+CommentSchema.pre("save", function (next : any) {
+      if (this) {
+        let doc = <ICommentDocument>this;
+        let now = new Date();
+
+        if (!doc.createdAt) {
+          doc.createdAt = now;
+        }
+
+        doc.modifiedAt = now;
+
+      }
+
+      next();
 });
 
 

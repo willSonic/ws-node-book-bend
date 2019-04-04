@@ -27,7 +27,7 @@ export class BookDataAgent{
       return book;
   }
 
-  async getBookById( googleId:string):Promise<any>{
+  async getBookByGoogleId( googleId:string):Promise<any>{
       let book =  await BookRepo.findOne({ googleId : googleId});
       if(!book){
             return  {status:401,  message: "incorrect googleId for Book"};
@@ -35,6 +35,15 @@ export class BookDataAgent{
       return book;
   }
 
+  async getBookById( bookId:string):Promise<any>{
+      let objectId = mongoose.Types.ObjectId;
+      if(! objectId.isValid(bookId)){
+            return  {status:401,  message: "incorrect book id"};
+      }
+      console.info('BookDataAgent-- getBookById - bookId =', bookId)
+      let result = await BookRepo.findById(bookId);
+      return result;
+  }
 
   async deleteExistingBook(bookId:string):Promise<any> {
       let objectId = mongoose.Types.ObjectId;

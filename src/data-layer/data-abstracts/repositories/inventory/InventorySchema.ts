@@ -1,4 +1,6 @@
 import { Schema } from "mongoose";
+import { CommentSchema, ICommentDocument } from '../comment';
+import { IInventoryDocument } from './IInventoryDocument';
 
 /**
  * MongooseSchema
@@ -44,5 +46,19 @@ const InventorySchema:Schema = new Schema({
   }
 
 });
+InventorySchema.pre("save", function (next : any) {
+      if (this) {
+        let doc = <IInventoryDocument>this;
+        let now = new Date();
 
+        if (!doc.createdAt) {
+          doc.createdAt = now;
+        }
+
+        doc.modifiedAt = now;
+
+      }
+
+      next();
+});
 export { InventorySchema };

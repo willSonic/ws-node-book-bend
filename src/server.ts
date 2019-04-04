@@ -8,6 +8,9 @@ import { logger } from './middleware/common/logging';
 
 import './service-layer/controllers/AuthorizationController';
 import './service-layer/controllers/UsersController';
+import './service-layer/controllers/CommentsController';
+import './service-layer/controllers/BooksController';
+import './service-layer/controllers/InventoryController';
 import {RegisterRoutes} from './middleware/server-config/routes';
 
 import * as methodOverride from 'method-override';

@@ -6,3 +6,5 @@ export interface ICommentResponse{
   createdAt?: Date,
   modifiedAt?: Date
 }
+
+export type ICommentResponses = ICommentResponse[];

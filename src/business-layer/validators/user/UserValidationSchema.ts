@@ -30,6 +30,5 @@ export class UserValidationSchema  {
        this.firstName = userInfo.firstName;
        this.lastName= userInfo.lastName;
        this.email= userInfo.email;
-
     }
 }

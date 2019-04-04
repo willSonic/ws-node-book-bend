@@ -1,4 +1,4 @@
-import { Route, Response, Get, Post, Patch, Header, Body, Security, Controller, Path } from 'tsoa';
+import { Route, Response, Get, Post, Patch, Header, Body, Security, Controller, Path, Delete } from 'tsoa';
 import { validate} from "class-validator";
 import { forEach, pick} from 'lodash';
 
@@ -81,7 +81,7 @@ export class UsersController extends Controller{
 
 
     @Patch()
-    public async Update(@Body() request: IUserUpdateRequest ): Promise<IUserResponse> {
+    public async UpdateUser(@Body() request: IUserUpdateRequest ): Promise<IUserResponse> {
         let result = await this.userDataAgent.updateUserProfile(request);
         if(result.id){
               var aUser = new UserModel(result);

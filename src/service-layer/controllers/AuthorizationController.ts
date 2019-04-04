@@ -1,6 +1,6 @@
 import { Route, Get, Post, Delete, Response, Header, Body, Controller } from 'tsoa';
-import { IUserLoginRequest } from '../request/index';
-import { IUserResponse, IMessageResponse }  from '../responses/index';
+import { IUserLoginRequest } from '../request';
+import { IUserResponse, IMessageResponse }  from '../responses';
 import { createAuthToken } from '../../business-layer/security/token-helpers';
 import { UserDataAgent } from '../../data-layer/data-agents/UserDataAgent';
 import { UserModel } from '../../data-layer/models/UserModel';

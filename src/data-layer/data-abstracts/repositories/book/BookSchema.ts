@@ -1,4 +1,6 @@
 import { Schema } from "mongoose";
+import { IInventoryDocument, InventorySchema } from '../inventory';
+import { IBookDocument } from './IBookDocument';
 
 /**
  * MongooseSchema
@@ -64,6 +66,20 @@ const BookSchema:Schema = new Schema({
   }
 
 });
+BookSchema.pre("save", function (next : any) {
+      if (this) {
+        let doc = <IBookDocument>this;
+        let now = new Date();
 
+        if (!doc.createdAt) {
+          doc.createdAt = now;
+        }
+
+        doc.modifiedAt = now;
+
+      }
+
+      next();
+});
 
 export { BookSchema };

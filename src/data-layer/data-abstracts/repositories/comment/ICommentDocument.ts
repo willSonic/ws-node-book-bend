@@ -1,6 +1,5 @@
-import {  Document }   from 'mongoose';
-
-export interface ICommentDocument extends Document {
+import mongoose = require('mongoose');
+export interface ICommentDocument extends mongoose.Document {
   id: string,
   bookRef: string, //book Id
   userRef: string, //user Id

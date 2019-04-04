@@ -2,6 +2,9 @@
 import { Controller, ValidationService, FieldErrors, ValidateError, TsoaRoute } from 'tsoa';
 import { AuthorizationsController } from './../../service-layer/controllers/AuthorizationController';
 import { UsersController } from './../../service-layer/controllers/UsersController';
+import { CommentsController } from './../../service-layer/controllers/CommentsController';
+import { BooksController } from './../../service-layer/controllers/BooksController';
+import { InventoryController } from './../../service-layer/controllers/InventoryController';
 import { expressAuthentication } from './../../business-layer/security/Authentication';
 import * as express from 'express';
 
@@ -52,6 +55,102 @@ const models: TsoaRoute.Models = {
             "admin": { "dataType": "boolean" },
         },
     },
+    "ICommentResponse": {
+        "properties": {
+            "id": { "dataType": "string" },
+            "bookRef": { "dataType": "string" },
+            "userRef": { "dataType": "string" },
+            "text": { "dataType": "string" },
+            "createdAt": { "dataType": "datetime" },
+            "modifiedAt": { "dataType": "datetime" },
+        },
+    },
+    "ICommentCreateRequest": {
+        "properties": {
+            "bookRef": { "dataType": "string", "required": true },
+            "userRef": { "dataType": "string", "required": true },
+            "text": { "dataType": "boolean", "required": true },
+        },
+    },
+    "ICommentUpdateRequest": {
+        "properties": {
+            "id": { "dataType": "string", "required": true },
+            "bookRef": { "dataType": "string", "required": true },
+            "userRef": { "dataType": "string", "required": true },
+            "text": { "dataType": "boolean", "required": true },
+        },
+    },
+    "ICommentResponses": {
+    },
+    "IBookResponse": {
+        "properties": {
+            "id": { "dataType": "string" },
+            "googleId": { "dataType": "string" },
+            "authors": { "dataType": "array", "array": { "dataType": "string" } },
+            "averageRating": { "dataType": "double" },
+            "description": { "dataType": "string" },
+            "imageLinks": { "dataType": "any" },
+            "pageCount": { "dataType": "double" },
+            "subtitle": { "dataType": "string" },
+            "title": { "dataType": "string" },
+            "categories": { "dataType": "array", "array": { "dataType": "string" } },
+            "ratingsCount": { "dataType": "double" },
+            "publishedDate": { "dataType": "datetime" },
+            "publisher": { "dataType": "string" },
+            "createdAt": { "dataType": "datetime" },
+            "modifiedAt": { "dataType": "datetime" },
+        },
+    },
+    "IBookCreateRequest": {
+        "properties": {
+            "googleId": { "dataType": "string", "required": true },
+            "authors": { "dataType": "array", "array": { "dataType": "string" }, "required": true },
+            "averageRating": { "dataType": "double" },
+            "description": { "dataType": "string", "required": true },
+            "imageLinks": { "dataType": "any" },
+            "pageCount": { "dataType": "double", "required": true },
+            "subtitle": { "dataType": "string" },
+            "title": { "dataType": "string", "required": true },
+            "categories": { "dataType": "array", "array": { "dataType": "string" }, "required": true },
+            "ratingsCount": { "dataType": "double" },
+            "publishedDate": { "dataType": "datetime", "required": true },
+            "publisher": { "dataType": "string", "required": true },
+        },
+    },
+    "IInventoryResponse": {
+        "properties": {
+            "id": { "dataType": "string" },
+            "bookRef": { "dataType": "string" },
+            "currentUserRef": { "dataType": "string" },
+            "available": { "dataType": "boolean" },
+            "checkOutDate": { "dataType": "datetime" },
+            "returnDate": { "dataType": "datetime" },
+            "waitList": { "dataType": "array", "array": { "dataType": "any" } },
+            "createdAt": { "dataType": "datetime" },
+            "modifiedAt": { "dataType": "datetime" },
+        },
+    },
+    "IInventoryCreateRequest": {
+        "properties": {
+            "bookRef": { "dataType": "string", "required": true },
+            "currentUserRef": { "dataType": "string", "required": true },
+            "available": { "dataType": "boolean", "required": true },
+            "checkOutDate": { "dataType": "string", "required": true },
+            "returnDate": { "dataType": "string", "required": true },
+            "waitList": { "dataType": "array", "array": { "dataType": "any" }, "required": true },
+        },
+    },
+    "IInventoryUpdateRequest": {
+        "properties": {
+            "id": { "dataType": "string", "required": true },
+            "bookRef": { "dataType": "string" },
+            "currentUserRef": { "dataType": "string" },
+            "available": { "dataType": "boolean" },
+            "checkOutDate": { "dataType": "string" },
+            "returnDate": { "dataType": "string" },
+            "waitList": { "dataType": "array", "array": { "dataType": "any" } },
+        },
+    },
 };
 const validationService = new ValidationService(models);
 
@@ -97,7 +196,7 @@ export function RegisterRoutes(app: express.Express) {
     app.post('/api/Users',
         function(request: any, response: any, next: any) {
             const args = {
-                request: { "in": "body", "name": "request", "required": true, "ref": "IInventoryCreateRequest" },
+                request: { "in": "body", "name": "request", "required": true, "ref": "IUserCreateRequest" },
             };
 
             let validatedArgs: any[] = [];
@@ -156,7 +255,7 @@ export function RegisterRoutes(app: express.Express) {
     app.patch('/api/Users',
         function(request: any, response: any, next: any) {
             const args = {
-                request: { "in": "body", "name": "request", "required": true, "ref": "IInventoryUpdateRequest" },
+                request: { "in": "body", "name": "request", "required": true, "ref": "IUserUpdateRequest" },
             };
 
             let validatedArgs: any[] = [];
@@ -169,7 +268,280 @@ export function RegisterRoutes(app: express.Express) {
             const controller = new UsersController();
 
 
-            const promise = controller.Update.apply(controller, validatedArgs as any);
+            const promise = controller.UpdateUser.apply(controller, validatedArgs as any);
+            promiseHandler(controller, promise, response, next);
+        });
+    app.post('/api/Comments',
+        authenticateMiddleware([{ "api_key": [] }]),
+        function(request: any, response: any, next: any) {
+            const args = {
+                request: { "in": "body", "name": "request", "required": true, "ref": "ICommentCreateRequest" },
+                authentication: { "in": "header", "name": "x-access-token", "required": true, "dataType": "string" },
+            };
+
+            let validatedArgs: any[] = [];
+            try {
+                validatedArgs = getValidatedArgs(args, request);
+            } catch (err) {
+                return next(err);
+            }
+
+            const controller = new CommentsController();
+
+
+            const promise = controller.CreateNewComment.apply(controller, validatedArgs as any);
+            promiseHandler(controller, promise, response, next);
+        });
+    app.patch('/api/Comments',
+        authenticateMiddleware([{ "api_key": [] }]),
+        function(request: any, response: any, next: any) {
+            const args = {
+                request: { "in": "body", "name": "request", "required": true, "ref": "ICommentUpdateRequest" },
+                authentication: { "in": "header", "name": "x-access-token", "required": true, "dataType": "string" },
+            };
+
+            let validatedArgs: any[] = [];
+            try {
+                validatedArgs = getValidatedArgs(args, request);
+            } catch (err) {
+                return next(err);
+            }
+
+            const controller = new CommentsController();
+
+
+            const promise = controller.UpdateComment.apply(controller, validatedArgs as any);
+            promiseHandler(controller, promise, response, next);
+        });
+    app.get('/api/Comments/byUser/:userId',
+        authenticateMiddleware([{ "api_key": [] }]),
+        function(request: any, response: any, next: any) {
+            const args = {
+                userId: { "in": "path", "name": "userId", "required": true, "dataType": "string" },
+                authentication: { "in": "header", "name": "x-access-token", "required": true, "dataType": "string" },
+            };
+
+            let validatedArgs: any[] = [];
+            try {
+                validatedArgs = getValidatedArgs(args, request);
+            } catch (err) {
+                return next(err);
+            }
+
+            const controller = new CommentsController();
+
+
+            const promise = controller.GetAllCommentsFromAUser.apply(controller, validatedArgs as any);
+            promiseHandler(controller, promise, response, next);
+        });
+    app.get('/api/Comments/onBook/:bookId',
+        authenticateMiddleware([{ "api_key": [] }]),
+        function(request: any, response: any, next: any) {
+            const args = {
+                bookId: { "in": "path", "name": "bookId", "required": true, "dataType": "string" },
+                authentication: { "in": "header", "name": "x-access-token", "required": true, "dataType": "string" },
+            };
+
+            let validatedArgs: any[] = [];
+            try {
+                validatedArgs = getValidatedArgs(args, request);
+            } catch (err) {
+                return next(err);
+            }
+
+            const controller = new CommentsController();
+
+
+            const promise = controller.GetAllCommentsOnBook.apply(controller, validatedArgs as any);
+            promiseHandler(controller, promise, response, next);
+        });
+    app.delete('/api/Comments/:commentId',
+        authenticateMiddleware([{ "api_key": [] }]),
+        function(request: any, response: any, next: any) {
+            const args = {
+                commentId: { "in": "path", "name": "commentId", "required": true, "dataType": "string" },
+                authentication: { "in": "header", "name": "x-access-token", "required": true, "dataType": "string" },
+            };
+
+            let validatedArgs: any[] = [];
+            try {
+                validatedArgs = getValidatedArgs(args, request);
+            } catch (err) {
+                return next(err);
+            }
+
+            const controller = new CommentsController();
+
+
+            const promise = controller.DeleteExistingCommentById.apply(controller, validatedArgs as any);
+            promiseHandler(controller, promise, response, next);
+        });
+    app.post('/api/Books',
+        authenticateMiddleware([{ "api_key": [] }]),
+        function(request: any, response: any, next: any) {
+            const args = {
+                request: { "in": "body", "name": "request", "required": true, "ref": "IBookCreateRequest" },
+                authentication: { "in": "header", "name": "x-access-token", "required": true, "dataType": "string" },
+            };
+
+            let validatedArgs: any[] = [];
+            try {
+                validatedArgs = getValidatedArgs(args, request);
+            } catch (err) {
+                return next(err);
+            }
+
+            const controller = new BooksController();
+
+
+            const promise = controller.CreateNewBook.apply(controller, validatedArgs as any);
+            promiseHandler(controller, promise, response, next);
+        });
+    app.get('/api/Books/bookTitle/:title',
+        authenticateMiddleware([{ "api_key": [] }]),
+        function(request: any, response: any, next: any) {
+            const args = {
+                title: { "in": "path", "name": "title", "required": true, "dataType": "string" },
+                authentication: { "in": "header", "name": "x-access-token", "required": true, "dataType": "string" },
+            };
+
+            let validatedArgs: any[] = [];
+            try {
+                validatedArgs = getValidatedArgs(args, request);
+            } catch (err) {
+                return next(err);
+            }
+
+            const controller = new BooksController();
+
+
+            const promise = controller.GetBookByTitle.apply(controller, validatedArgs as any);
+            promiseHandler(controller, promise, response, next);
+        });
+    app.get('/api/Books/fromGoogle/:googleId',
+        authenticateMiddleware([{ "api_key": [] }]),
+        function(request: any, response: any, next: any) {
+            const args = {
+                googleId: { "in": "path", "name": "googleId", "required": true, "dataType": "string" },
+                authentication: { "in": "header", "name": "x-access-token", "required": true, "dataType": "string" },
+            };
+
+            let validatedArgs: any[] = [];
+            try {
+                validatedArgs = getValidatedArgs(args, request);
+            } catch (err) {
+                return next(err);
+            }
+
+            const controller = new BooksController();
+
+
+            const promise = controller.GetBookByGoogleId.apply(controller, validatedArgs as any);
+            promiseHandler(controller, promise, response, next);
+        });
+    app.get('/api/Books/book/:bookId',
+        authenticateMiddleware([{ "api_key": [] }]),
+        function(request: any, response: any, next: any) {
+            const args = {
+                bookId: { "in": "path", "name": "bookId", "required": true, "dataType": "string" },
+                authentication: { "in": "header", "name": "x-access-token", "required": true, "dataType": "string" },
+            };
+
+            let validatedArgs: any[] = [];
+            try {
+                validatedArgs = getValidatedArgs(args, request);
+            } catch (err) {
+                return next(err);
+            }
+
+            const controller = new BooksController();
+
+
+            const promise = controller.GetBookById.apply(controller, validatedArgs as any);
+            promiseHandler(controller, promise, response, next);
+        });
+    app.delete('/api/Books/:bookId',
+        authenticateMiddleware([{ "api_key": [] }]),
+        function(request: any, response: any, next: any) {
+            const args = {
+                bookId: { "in": "path", "name": "bookId", "required": true, "dataType": "string" },
+                authentication: { "in": "header", "name": "x-access-token", "required": true, "dataType": "string" },
+            };
+
+            let validatedArgs: any[] = [];
+            try {
+                validatedArgs = getValidatedArgs(args, request);
+            } catch (err) {
+                return next(err);
+            }
+
+            const controller = new BooksController();
+
+
+            const promise = controller.DeleteExistingBookById.apply(controller, validatedArgs as any);
+            promiseHandler(controller, promise, response, next);
+        });
+    app.post('/api/Inventory',
+        authenticateMiddleware([{ "api_key": [] }]),
+        function(request: any, response: any, next: any) {
+            const args = {
+                request: { "in": "body", "name": "request", "required": true, "ref": "IInventoryCreateRequest" },
+                authentication: { "in": "header", "name": "x-access-token", "required": true, "dataType": "string" },
+            };
+
+            let validatedArgs: any[] = [];
+            try {
+                validatedArgs = getValidatedArgs(args, request);
+            } catch (err) {
+                return next(err);
+            }
+
+            const controller = new InventoryController();
+
+
+            const promise = controller.CreateNewInventory.apply(controller, validatedArgs as any);
+            promiseHandler(controller, promise, response, next);
+        });
+    app.patch('/api/Inventory',
+        authenticateMiddleware([{ "api_key": [] }]),
+        function(request: any, response: any, next: any) {
+            const args = {
+                request: { "in": "body", "name": "request", "required": true, "ref": "IInventoryUpdateRequest" },
+                authentication: { "in": "header", "name": "x-access-token", "required": true, "dataType": "string" },
+            };
+
+            let validatedArgs: any[] = [];
+            try {
+                validatedArgs = getValidatedArgs(args, request);
+            } catch (err) {
+                return next(err);
+            }
+
+            const controller = new InventoryController();
+
+
+            const promise = controller.UpdateInventory.apply(controller, validatedArgs as any);
+            promiseHandler(controller, promise, response, next);
+        });
+    app.get('/api/Inventory/byBook/:bookId',
+        authenticateMiddleware([{ "api_key": [] }]),
+        function(request: any, response: any, next: any) {
+            const args = {
+                bookId: { "in": "path", "name": "bookId", "required": true, "dataType": "string" },
+                authentication: { "in": "header", "name": "x-access-token", "required": true, "dataType": "string" },
+            };
+
+            let validatedArgs: any[] = [];
+            try {
+                validatedArgs = getValidatedArgs(args, request);
+            } catch (err) {
+                return next(err);
+            }
+
+            const controller = new InventoryController();
+
+
+            const promise = controller.GetInventoryByBookId.apply(controller, validatedArgs as any);
             promiseHandler(controller, promise, response, next);
         });
 

@@ -41,7 +41,6 @@ export class CommentDataAgent {
       return commentsByUserRefResult;
   }
 
-
   async getAllCommentsByBookId(bookId:string):Promise<any> {
       let objectId = mongoose.Types.ObjectId;
        if(! objectId.isValid(bookId) ){

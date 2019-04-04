@@ -68,9 +68,6 @@ export class BookModel {
   }
 
 
-
-
-
   get createdAt(): Date {
     return this._bookModel.createdAt;
   }

@@ -13,6 +13,18 @@
             {
                 "name":"user",
                 "description":"Operations about user"
+            },
+            {
+                "name":"book",
+                "description":"Operations concerning books"
+            },
+            {
+                "name":"inventory",
+                "description":"Operations concerning inventory ( checkouts, wait-list)"
+            },
+            {
+                "name":"comment",
+                "description":"Operations concerning comments on books"
             }
         ],
         "schemes": [ "http", "https" ],
