@@ -63,4 +63,5 @@ class MongooseAccess {
 }
 
 MongooseAccess.connect();
+
 export { MongooseAccess };

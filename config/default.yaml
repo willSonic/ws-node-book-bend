@@ -10,6 +10,13 @@ mongo:
     urlClient: 'mongodb://127.0.0.1:27017/ws-demo'
     urlDocker: 'mongodb://mongo:27017/ws-demo'
 
+redis:
+    TTL: 86400
+    port: 6379
+
+
+
+
 
 # none/debug/info
 loglevel: info
