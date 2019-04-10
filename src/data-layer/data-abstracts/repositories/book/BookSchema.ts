@@ -35,6 +35,7 @@ const BookSchema:Schema = new Schema({
       },
     }),
   },
+
   pageCount:  {
                     type: Number
                 },
@@ -46,7 +47,9 @@ const BookSchema:Schema = new Schema({
             type: String,
             required: true
          },
+
   categories:  [{ type: String }],
+
   ratingsCount: {
                   type: Number,
                 },

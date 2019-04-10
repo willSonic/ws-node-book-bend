@@ -5,7 +5,7 @@ import { forEach, pick} from 'lodash';
 import { IUserCreateRequest, IUserUpdateRequest} from '../request/index';
 import { IUserResponse, IErrorResponse} from '../responses/index'
 import { validateUserRegistration }   from "../../business-layer/validators/user/UserValidationProcessor";
-import { createAuthToken } from '../../business-layer/security/token-helpers';
+import { createJwtToken } from '../../business-layer/security/token-helpers';
 
 import { UserDataAgent } from '../../data-layer/data-agents/UserDataAgent';
 import { UserModel } from '../../data-layer/models/UserModel';
@@ -34,7 +34,7 @@ export class UsersController extends Controller{
        let result = await this.userDataAgent.createNewUser(request);
        if(result.id){
            var newUser = new UserModel(result);
-           let loginResult = Object.assign({account:{ user:newUser.getClientUserModel(),  token:createAuthToken( result.id) } });
+           let loginResult = Object.assign({account:{ user:newUser.getClientUserModel(),  token:createJwtToken( result.id) } });
            return <IUserResponse>(loginResult);
        }else{
 

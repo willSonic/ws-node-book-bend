@@ -1,25 +1,24 @@
-import { RedisClient, createClient  } from 'redis';
+import  * as IORedis  from "ioredis";
 import * as config from 'config';
 import { logger } from '../../middleware/common/logging';
-
-
+import { Redis } from 'ioredis';
 
 class RedisAccess {
       static redisInstance:any;
-      static redisClient:RedisClient;
+      static redisClient:IORedis.Redis;
       static isRedisConnected:boolean = false;
       static tryReconnecting:number = 0;
       static maxReconnectingTry:number = 4;
-
-      constructor() {
+       constructor(){
           RedisAccess.connect();
-        }
-      static async connect()  : RedisClient {
+       }
+
+       static  connect( )  : void {
             if (this.redisInstance) {
                return this.redisInstance;
             }
 
-            let redisOptions = config.get('redis...');
+            let redisOptions = config.get('redis');
 
 
             this.redisClient.once('ready', () => {
@@ -27,7 +26,12 @@ class RedisAccess {
              });
 
 
-            this.redisInstance =   await this.redisClient.createClient(redisOptions );
+            this.redisClient =   new  IORedis({
+                          host:config.get('redis.urlDocker').toString(),
+                          port: Number(config.get('redis.port')),
+            } );
+
+            this.redisInstance = this.redisClient;
 
             this.redisClient.on('connect',()=>{
                 logger.debug('subs connected to redis');
@@ -53,20 +57,18 @@ class RedisAccess {
            // If the Node process ends, close the Mongoose connection
             process.on('SIGINT', () => {
               this.redisClient.quit(() => {
-              logger.info('Redis default connection disconnected through app termination.');
+                 this.redisClient.removeAllListeners('ready');
+                 this.redisClient.removeAllListeners('connect');
+                 this.redisClient.removeAllListeners('error');
+                 this.redisClient.removeAllListeners('reconnecting');
+                logger.info('Redis default connection disconnected through app termination.');
                 process.exit(0);
               });
             });
 
-
-
-
-
         return  this.redisInstance;
      }
-
 }
 
-RedisAccess.connect();
 
 export { RedisAccess }

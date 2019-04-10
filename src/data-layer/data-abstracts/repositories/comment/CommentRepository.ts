@@ -5,5 +5,6 @@ import { ICommentDocument } from './ICommentDocument';
 
 export type CommentMod = Model<ICommentDocument>;
 
-export const CommentRepo:CommentMod = MongooseAccess.mongooseConnection.model<ICommentDocument>("comment", CommentSchema);
+export const CommentRepo:CommentMod =
+  MongooseAccess.mongooseConnection.model<ICommentDocument>("comment", CommentSchema);
 

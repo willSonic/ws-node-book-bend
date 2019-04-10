@@ -1,27 +1,32 @@
 import { Schema } from "mongoose";
-import { ICommentDocument } from './ICommentDocument';
+import { IMessageDocument } from './IMessageDocument';
 
 /**
  * MongooseSchema
  * @type {"mongoose".Schema}
  * @private
  */
-const CommentSchema:Schema = new Schema({
-  text: {
-     type: String,
-     required: true,
-     trim: true,
-  },
-  bookRef:{
-      type: Schema.Types.ObjectId,
-      ref: 'Book',
-      required: true,
-  },
+
+ const MessageSchema:Schema = new Schema({
+
   userRef:{
         type: Schema.Types.ObjectId,
         ref: 'User',
         required: true,
   },
+
+  messageType:{
+        type: String,
+  },
+
+  messageText:{
+        type: String,
+  },
+
+  reviewedAt:{
+	   type: Date,
+  },
+
   createdAt: {
 	   type: Date,
 	   default : Date.now
@@ -34,9 +39,11 @@ const CommentSchema:Schema = new Schema({
 
 });
 
-CommentSchema.pre("save", function (next : any) {
+
+
+MessageSchema.pre("save", function (next : any) {
       if (this) {
-        let doc = <ICommentDocument>this;
+        let doc = <IMessageDocument>this;
         let now = new Date();
 
         if (!doc.createdAt) {
@@ -51,4 +58,4 @@ CommentSchema.pre("save", function (next : any) {
 });
 
 
-export { CommentSchema };
+export {MessageSchema };

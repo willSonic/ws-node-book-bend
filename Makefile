@@ -3,7 +3,7 @@ all:
 
 
 CONTAINER_NAME = ws-node-book-bend-container
-IMAGE_NAME = local-ws-book-bend-dev
+IMAGE_NAME = local-ws-node-book-bend-dev
 
 build-clean:
 	rm -rf node_modules
@@ -33,6 +33,9 @@ flush:
 
 rm:
 	docker rm $(CONTAINER_NAME)
+
+rm-image:
+	docker rmi $(IMAGE_NAME)
 
 up:
 	docker-compose up

@@ -1,8 +1,8 @@
 export interface IInventoryUpdateRequest{
-  id:string,
+  id:string;
   bookRef?: string;
   currentUserRef?: string;
-  available?: boolean,
+  available?: boolean;
   checkOutDate?: string;
   returnDate?: string;
   waitList?: Array<any>;

@@ -1,4 +1,4 @@
-export interface IMessageResponse{
+export interface ISuccessResponse{
    success:boolean;
    message:string;
  }

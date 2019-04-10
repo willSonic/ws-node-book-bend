@@ -5,6 +5,7 @@ express:
 
 auth:
     jwt_secret: 'UR4swimlane$'
+    jwt_short_time_secret: 'M@S0m3NU$'
 
 mongo:
     urlClient: 'mongodb://127.0.0.1:27017/ws-demo'
@@ -13,6 +14,7 @@ mongo:
 redis:
     TTL: 86400
     port: 6379
+    urlDocker: 'redis://tokenholder'
 
 
 
