@@ -1,9 +1,11 @@
 export interface IProfileUpdateRequest{
   id: string;
-  userName?: string;
-  firstName?: string;
-  lastName?: string;
-  email?: string;
-  admin?: boolean;
+  userRef:string,
+  checkedOutCount?: number,
+  waitListCount?: number,
+  commentRefs?:Array<string>
+  messageRefs?:Array<string>
+  bookedRefs?:Array<string>
+  waitlistRefs?:Array<string>
   interestCategories?:Array<string>;
 }

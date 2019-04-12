@@ -18,22 +18,12 @@ export class InventoryModel {
     return this._inventoryModel.bookRef;
   }
 
-
-  get currentUserRef(): string {
-    return this._inventoryModel.currentUserRef;
+  get crntBookedRef(): string {
+    return this._inventoryModel.crntBookedRef;
   }
 
-  get available(): boolean {
+  get available(): boolean{
     return this._inventoryModel.available;
-  }
-
-
-  get checkOutDate(): Date {
-    return this._inventoryModel.checkOutDate;
-  }
-
-  get returnDate(): Date {
-    return this._inventoryModel.returnDate;
   }
 
   get waitList(): Array<{ userRef:string,  requestDate: Date}> {

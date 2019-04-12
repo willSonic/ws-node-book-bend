@@ -1,7 +1,6 @@
 import mongoose = require('mongoose');
 import { InventoryRepo, IInventoryDocument} from '../data-abstracts/repositories/inventory';
 import { logger } from '../../middleware/common/logging';
-import { CommentRepo } from '../data-abstracts/repositories/comment';
 
 export class InventoryDataAgent{
 

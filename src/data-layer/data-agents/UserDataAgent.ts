@@ -59,16 +59,16 @@ export class UserDataAgent{
 
 
 
-  async updateUserProfile(userProfile:any):Promise<any> {
+  async updateUser(user:any):Promise<any> {
       let objectId = mongoose.Types.ObjectId;
-      if(! objectId.isValid(userProfile.id)){
+      if(! objectId.isValid(user.id)){
             return  {thrown:true, status:401,  message: "incorrect user id"};
       }
-      let resultUserById = await UserRepo.findById(userProfile.id);
+      let resultUserById = await UserRepo.findById(user.id);
       if(resultUserById){
          return  {thrown:true, status:409,  message: "this user does not exist"};
       }
-      let savedResult = await userProfile.save();
+      let savedResult = await resultUserById.save();
       if(savedResult.errors){
           return  {status:422,  message: "db is currently unable to process request"};
       }

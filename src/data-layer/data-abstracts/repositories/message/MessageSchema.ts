@@ -29,12 +29,12 @@ import { IMessageDocument } from './IMessageDocument';
 
   createdAt: {
 	   type: Date,
-	   default : Date.now
+	   default : Date.now()
   },
 
   modifiedAt: {
 	   type: Date,
-	   default : Date.now
+	   default : Date.now()
   }
 
 });

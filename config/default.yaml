@@ -9,7 +9,7 @@ auth:
 
 mongo:
     urlClient: 'mongodb://127.0.0.1:27017/ws-demo'
-    urlDocker: 'mongodb://mongo:27017/ws-demo'
+    urlDocker: 'mongodb://mongodb-primary:27017/ws-demo'
 
 redis:
     TTL: 86400

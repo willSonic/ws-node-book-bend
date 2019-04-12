@@ -48,12 +48,12 @@ let UserSchema:Schema = new Schema({
 
   createdAt: {
 	   type: Date,
-	   default : Date.now
+	   default : Date.now()
   },
 
   modifiedAt: {
 	   type: Date,
-	   default : Date.now
+	   default : Date.now()
   }
 
 })

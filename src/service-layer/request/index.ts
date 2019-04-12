@@ -9,6 +9,7 @@ export {  IBookCreateRequest   } from './book/IBookCreateRequest';
 export {  IBookUpdateRequest   } from './book/IBookUpdateRequest';
 
 export { IProfileFetchByIdRequest }  from './profile/IProfileFetchByIdRequest';
+export { IProfileCreateRequest } from './profile/IProfileCreateRequest';
 export { IProfileUpdateRequest }  from './profile/IProfileUpdateRequest';
 
 export {  IInventoryCreateRequest   } from './inventory/IInventoryCreateRequest';

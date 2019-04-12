@@ -1,8 +1,7 @@
 export interface IInventoryCreateRequest{
+  userRef: string,
   bookRef: string;
-  currentUserRef: string;
+  crntBookedRef: string;
   available: boolean;
-  checkOutDate: string;
-  returnDate: string;
   waitList:Array<any>;
 }

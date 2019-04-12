@@ -1,3 +1,3 @@
 export interface IInventoryFetchRequest{
-  bookId?:string;
+  bookRef?:string;
 }

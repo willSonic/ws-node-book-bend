@@ -1,5 +1,5 @@
 import { Schema } from "mongoose";
-import { CommentSchema, ICommentDocument } from '../comment';
+
 import { IInventoryDocument } from './IInventoryDocument';
 
 /**
@@ -12,37 +12,40 @@ const InventorySchema:Schema = new Schema({
         type: Schema.Types.ObjectId,
         ref: 'Book',
         required: true,
-      },
-  currentUserRef:{
+     },
+
+  crntBookedRef:{
         type: Schema.Types.ObjectId,
-        ref: 'User',
+        ref: 'Booked',
         required: true,
       },
+
   available: {
         type: Boolean,
         default:false,
        },
-  checkOutDate: {
-          type:Date
-        },
-   returnDate: {
-          type:Date
-        },
-    waitList: [{
-            userRef:{
-                type: Schema.Types.ObjectId,
-                ref: 'User',
-            },
-            requestDate: Date,
-          }],
+
+  waitList: [{
+          userRef:{
+            type: Schema.Types.ObjectId,
+            ref: 'User',
+            required: true,
+          },
+          requestDate: {
+             type: Date,
+             default : Date.now(),
+             required: true,
+          },
+        }],
+
   createdAt: {
 	   type: Date,
-	   default : Date.now
+	   default : Date.now(),
   },
 
   modifiedAt: {
 	   type: Date,
-	   default : Date.now
+	   default : Date.now(),
   }
 
 });

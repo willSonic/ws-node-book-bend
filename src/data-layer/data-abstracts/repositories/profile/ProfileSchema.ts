@@ -24,24 +24,47 @@ import { IProfileDocument } from './IProfileDocument';
                     default : 0
                 },
 
+ // message id
   messageRefs:[{
-       type: String,
+        type: Schema.Types.ObjectId,
+        ref: 'Message',
+        required: true,
+        }],
+
+ // comment id
+  commentRefs:[{
+        type: Schema.Types.ObjectId,
+        ref: 'Comment',
+         required: true,
+        }],
+
+ // bookedRefs
+   bookedRefs:[{
+        type: Schema.Types.ObjectId,
+        ref: 'Booked',
        required: true,
         }],
 
-  commentRefs:[{
-       type: String,
-       required: true,
+// waitlistRefs
+   waitlistRefs:[{
+        type: Schema.Types.ObjectId,
+        ref: 'Inventory',
+        required: true,
+        }],
+//interest catagories from books checked out
+   interestCategories:[{
+        type: String,
+        required: true,
         }],
 
   createdAt: {
 	   type: Date,
-	   default : Date.now
+	   default : Date.now()
   },
 
   modifiedAt: {
 	   type: Date,
-	   default : Date.now
+	   default : Date.now()
   }
 
 });

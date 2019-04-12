@@ -27,8 +27,17 @@ export class ProfileModel {
   get commentRefs(): Array<string> {
      return this._profileModel.commentRefs;
   }
+
   get messageRefs(): Array<string> {
      return this._profileModel.messageRefs;
+  }
+
+  get waitlistRefs(): Array<string> {
+     return this._profileModel.waitlistRefs;
+  }
+
+  get bookedRefs(): Array<string> {
+     return this._profileModel.bookedRefs;
   }
 
   get interestCategories(): Array<string> {

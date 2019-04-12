@@ -1,9 +1,8 @@
 import { Route, Response, Get, Post, Patch, Header, Body, Security, Controller, Path, Delete } from 'tsoa';
 import { validate} from "class-validator";
-import { forEach, pick} from 'lodash';
 
 import { IUserCreateRequest, IUserUpdateRequest} from '../request/index';
-import { IUserResponse, IErrorResponse} from '../responses/index'
+import { IUserResponse, IErrorResponse} from '../responses/index';
 import { validateUserRegistration }   from "../../business-layer/validators/user/UserValidationProcessor";
 import { createJwtToken } from '../../business-layer/security/token-helpers';
 
@@ -31,14 +30,19 @@ export class UsersController extends Controller{
                  data:vaildationErrors
                 };
        }
-       let result = await this.userDataAgent.createNewUser(request);
-       if(result.id){
-           var newUser = new UserModel(result);
-           let loginResult = Object.assign({account:{ user:newUser.getClientUserModel(),  token:createJwtToken( result.id) } });
+       let newUserAttempt = await this.userDataAgent.createNewUser(request);
+       if(newUserAttempt.id){
+           const newUser = new UserModel(newUserAttempt);
+           const loginResult = Object.assign(
+           {account:{
+                    user:newUser.getClientUserModel(),
+                     token:createJwtToken( newUserAttempt.id)
+                     }
+              });
            return <IUserResponse>(loginResult);
        }else{
 
-          throw result;
+          throw newUserAttempt;
 
        }
     }
@@ -82,7 +86,7 @@ export class UsersController extends Controller{
 
     @Patch()
     public async UpdateUser(@Body() request: IUserUpdateRequest ): Promise<IUserResponse> {
-        let result = await this.userDataAgent.updateUserProfile(request);
+        let result = await this.userDataAgent.updateUser(request);
         if(result.id){
               var aUser = new UserModel(result);
                return <IUserResponse>(aUser.getClientUserModel());
@@ -90,7 +94,5 @@ export class UsersController extends Controller{
           throw result
         }
     }
-
-
 
 }

@@ -20,6 +20,7 @@ export class InventoryController extends Controller{
     @Body()  request:IInventoryCreateRequest,
     @Header('x-access-token') authentication: string
   ): Promise<IInventoryResponse> {
+
       let result = await this.inventoryDataAgent.createNewInventory(request);
       if(result.id){
          return <IInventoryResponse >( new InventoryModel(result));
