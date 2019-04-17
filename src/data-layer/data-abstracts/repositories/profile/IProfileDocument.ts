@@ -1,14 +1,19 @@
-import {  Document }   from 'mongoose';
+import {  Document, Types }   from 'mongoose';
+import { IBookedDocument } from '../booked';
+import { IInventoryDocument } from '../inventory';
+import { IMessageDocument } from '../message';
+import { ICommentDocument } from '../comment';
+import { IUserDocument } from '../user';
 
 export interface IProfileDocument extends Document {
   id: string,
-  userRef:string,
+  user: IUserDocument,
   checkedOutCount: number,
-  waitListCount: number ,
-  commentRefs:string[],
-  messageRefs: string[],
-  bookedRefs: string[],
-  waitlistRefs: string[],
+  waitListCount: number,
+  comments: Types.DocumentArray<ICommentDocument>,
+  messages: Types.DocumentArray<IMessageDocument>,
+  booksOut:Types.DocumentArray<IBookedDocument>,
+  inventories: Types.DocumentArray<IInventoryDocument>,
   interestCategories: string[],
   createdAt: Date,
   modifiedAt: Date

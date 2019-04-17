@@ -1,4 +1,6 @@
 import { IProfileDocument } from '../data-abstracts/repositories/profile';
+import { ICommentResponse, IInventoryResponse, IMessageResponse, IUserResponse } from '../../service-layer/responses';
+import { IBookedResponse } from '../../service-layer/responses/booked/IBookedResponse';
 
 
 export class ProfileModel {
@@ -13,8 +15,8 @@ export class ProfileModel {
     return (this._profileModel.id).toString();
   }
 
-  get userRef(): string {
-     return this._profileModel.userRef;
+  get user(): IUserResponse {
+     return this._profileModel.user;
   }
 
   get checkedOutCount(): number {
@@ -24,20 +26,20 @@ export class ProfileModel {
      return this._profileModel.waitListCount;
   }
 
-  get commentRefs(): Array<string> {
-     return this._profileModel.commentRefs;
+  get comments(): ICommentResponse[] {
+     return this._profileModel.comments;
   }
 
-  get messageRefs(): Array<string> {
-     return this._profileModel.messageRefs;
+  get messages(): IMessageResponse[]{
+     return this._profileModel.messages;
   }
 
-  get waitlistRefs(): Array<string> {
-     return this._profileModel.waitlistRefs;
+  get inventories(): IInventoryResponse[]{
+     return this._profileModel.inventories;
   }
 
-  get bookedRefs(): Array<string> {
-     return this._profileModel.bookedRefs;
+  get booksOut(): IBookedResponse[] {
+     return this._profileModel.booksOut;
   }
 
   get interestCategories(): Array<string> {

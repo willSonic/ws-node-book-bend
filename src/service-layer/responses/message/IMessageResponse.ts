@@ -1,6 +1,8 @@
+import { IUserResponse } from '..';
+
 export interface IMessageResponse{
   id: string;
-  userRef: string; //user Id
+  user: IUserResponse
   messageType: string;
   messageText: string;
   reviewedAt: Date

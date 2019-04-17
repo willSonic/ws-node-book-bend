@@ -9,14 +9,13 @@ import { createJwtToken } from '../../business-layer/security/token-helpers';
 import { UserDataAgent } from '../../data-layer/data-agents/UserDataAgent';
 import { UserModel } from '../../data-layer/models/UserModel';
 
+import { DataAgentServices as dataAgent } from '../../data-layer/data-agents';
 import { logger } from '../../middleware/common/logging';
 
 
 @Route('Users')
 export class UsersController extends Controller{
 
-
-    userDataAgent:UserDataAgent = new UserDataAgent();
 
     @Post()
     public async RegisterNewUser(@Body()  request: IUserCreateRequest): Promise<IUserResponse> {
@@ -30,7 +29,7 @@ export class UsersController extends Controller{
                  data:vaildationErrors
                 };
        }
-       let newUserAttempt = await this.userDataAgent.createNewUser(request);
+       let newUserAttempt = await dataAgent.userDA.createNewUser(request);
        if(newUserAttempt.id){
            const newUser = new UserModel(newUserAttempt);
            const loginResult = Object.assign(
@@ -41,9 +40,7 @@ export class UsersController extends Controller{
               });
            return <IUserResponse>(loginResult);
        }else{
-
           throw newUserAttempt;
-
        }
     }
 
@@ -51,7 +48,7 @@ export class UsersController extends Controller{
     @Security('api_key')
     @Get('{userId}')
     public async GetUserById(userId: string, @Header('x-access-token') authentication: string ): Promise<IUserResponse> {
-       let result = await this.userDataAgent.getUserById(userId);
+       let result = await dataAgent.userDA.getUserById(userId);
        if( result && result.userName){
               var aUser = new UserModel(result);
                return <IUserResponse>(aUser.getClientUserModel());
@@ -60,7 +57,7 @@ export class UsersController extends Controller{
               throw result;
           }else{
 
-              throw{
+              throw {
                    thrown:true,
                    status: 404,
                    message: 'no such user exist'
@@ -74,7 +71,7 @@ export class UsersController extends Controller{
     @Response<IErrorResponse>('404','no such user exist' )
     @Get('userName/{userName}')
     public async GetUserByUsername( @Path() userName: string): Promise<IUserResponse> {
-        let result = await this.userDataAgent.getByUsername(userName)
+        let result = await dataAgent.userDA.getByUsername(userName)
         if( result && result.userName){
                var aUser = new UserModel(result);
                return <IUserResponse>( {user:aUser.getClientUserModel()});
@@ -86,7 +83,7 @@ export class UsersController extends Controller{
 
     @Patch()
     public async UpdateUser(@Body() request: IUserUpdateRequest ): Promise<IUserResponse> {
-        let result = await this.userDataAgent.updateUser(request);
+        let result = await dataAgent.userDA.updateUser(request);
         if(result.id){
               var aUser = new UserModel(result);
                return <IUserResponse>(aUser.getClientUserModel());

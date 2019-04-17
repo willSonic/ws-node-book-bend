@@ -4,26 +4,21 @@ import { validate} from "class-validator";
 import { IProfileCreateRequest, IProfileUpdateRequest} from '../request/index';
 import { IProfileResponse, IErrorResponse} from '../responses/index';
 import { createJwtToken } from '../../business-layer/security/token-helpers';
-
-import { ProfileDataAgent } from '../../data-layer/data-agents/ProfileDataAgent';
-import { UserDataAgent } from '../../data-layer/data-agents/UserDataAgent';
 import { ProfileModel } from '../../data-layer/models/ProfileModel';
-
+import { DataAgentServices as dataAgent } from '../../data-layer/data-agents';
 import { logger } from '../../middleware/common/logging';
 
 
 @Route('Profiles')
 export class ProfilesController extends Controller{
 
-    profileDataAgent:ProfileDataAgent = new ProfileDataAgent();
-    userDataAgent:UserDataAgent = new UserDataAgent();
 
     @Security('api_key')
     @Post()
     public async createNewProfile(@Body()  request: IProfileCreateRequest): Promise<IProfileResponse> {
-       let userExist = await this.userDataAgent.getUserById(request.userRef);
+       let userExist = await dataAgent.userDA.getUserById(request.userRef);
        if( userExist  &&   userExist.userName){
-             let newProfileAttempt = await this.profileDataAgent.createNewProfile(request);
+             let newProfileAttempt = await dataAgent.profileDA.createNewProfile(request);
              if(newProfileAttempt.id){
                  const newProfile = new ProfileModel(newProfileAttempt);
                  return <IProfileResponse>(newProfile);
@@ -44,11 +39,10 @@ export class ProfilesController extends Controller{
 
     }
 
-
     @Security('api_key')
     @Get('{profileId}')
     public async GetProfileById(profileId: string, @Header('x-access-token') authentication: string ): Promise<IProfileResponse> {
-       let profileResultById = await this.profileDataAgent.getProfileById(profileId);
+       let profileResultById = await dataAgent.profileDA.getProfileById(profileId);
        if( profileResultById && profileResultById.userRef){
               const aProfile = new ProfileModel(profileResultById);
               return <IProfileResponse>(aProfile);
@@ -65,12 +59,10 @@ export class ProfilesController extends Controller{
        }
     }
 
-
-
     @Security('api_key')
     @Patch()
     public async UpdateProfile(@Body() request: IProfileUpdateRequest ): Promise<IProfileResponse> {
-        let profileUpdateResult = await this.profileDataAgent.updateProfile(request);
+        let profileUpdateResult = await dataAgent.profileDA.updateProfile(request);
         if(profileUpdateResult.id){
                const aProfile = new ProfileModel(profileUpdateResult);
                return <IProfileResponse>(aProfile);

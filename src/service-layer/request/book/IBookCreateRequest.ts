@@ -1,4 +1,5 @@
 export interface IBookCreateRequest{
+  userRef?:string;
   googleId:string;
   authors: string[];
   averageRating?: number;

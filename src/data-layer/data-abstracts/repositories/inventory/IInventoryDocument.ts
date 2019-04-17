@@ -1,9 +1,10 @@
 import {  Document }   from 'mongoose';
+import { IBookedDocument } from '../booked';
 
 export interface IInventoryDocument extends Document {
   id: string,
-  bookRef:string,
-  crntBookedRef:string,
+  bookIdRef:string,
+  booked:IBookedDocument,
   available: boolean,
   waitList: [{
         userRef:string,

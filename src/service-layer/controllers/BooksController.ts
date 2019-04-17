@@ -2,32 +2,31 @@ import {
 Route, Response, Get, Post,
 Header, Body, Security, Controller,
 Delete, Path } from 'tsoa';
-import { forEach, pick} from 'lodash';
 
 import { IBookCreateRequest } from '../request';
 import { IBookResponse, IErrorResponse, IUserResponse } from '../responses';
-
-import { BookDataAgent } from '../../data-layer/data-agents/BookDataAgent';
 import { BookModel } from '../../data-layer/models/BookModel';
-
+import { DataAgentServices as dataAgent } from '../../data-layer/data-agents';
 import { logger } from '../../middleware/common/logging';
 
 
 @Route('Books')
 export class BooksController extends Controller{
-  bookDataAgent:BookDataAgent = new BookDataAgent();
-
   @Security('api_key')
   @Post()
   public async CreateNewBook(
     @Body()  request:IBookCreateRequest,
     @Header('x-access-token') authentication: string ):Promise<IBookResponse>{
-       let result = await this.bookDataAgent.createNewBook(request);
+     if( !request.userRef ){
+       let result = await dataAgent.bookDA.createOrFindBook(request);
        if(result.id){
          return <IBookResponse>(new BookModel(result));
        }else{
           throw result;
        }
+     }else{
+
+     }
   }
 
   @Security('api_key')
@@ -35,7 +34,7 @@ export class BooksController extends Controller{
   public async GetBookByTitle(
     @Path() title: string,
     @Header('x-access-token') authentication: string ):Promise<IBookResponse>{
-      let result = await this.bookDataAgent.getBookByTitle(title);
+      let result = await dataAgent.bookDA.getBookByTitle(title);
       if( result && result.googleId){
          return <IBookResponse>(new BookModel(result));
       }else{
@@ -57,7 +56,7 @@ export class BooksController extends Controller{
   public async GetBookByGoogleId(
     @Path() googleId: string,
     @Header('x-access-token') authentication: string ):Promise<IBookResponse>{
-      let result = await this.bookDataAgent.getBookByGoogleId(googleId);
+      let result = await dataAgent.bookDA.getBookByGoogleId(googleId);
       if( result && result.title){
          return <IBookResponse>(new BookModel(result));
       }else{
@@ -80,7 +79,7 @@ export class BooksController extends Controller{
   public async GetBookById(
     @Path() bookId: string,
     @Header('x-access-token') authentication: string ):Promise<IBookResponse>{
-      let result = await this.bookDataAgent.getBookById(bookId);
+      let result = await dataAgent.bookDA.getBookById(bookId);
       if( result && result.title){
          return <IBookResponse>(new BookModel(result));
       }else{
@@ -96,12 +95,16 @@ export class BooksController extends Controller{
       }
   }
 
+
+
+
+
   @Security('api_key')
   @Delete('{bookId}')
   public async DeleteExistingBookById(
     @Path() bookId: string,
     @Header('x-access-token') authentication: string ): Promise<IBookResponse> {
-       let result = await this.bookDataAgent.deleteExistingBook(bookId);
+       let result = await dataAgent.bookDA.deleteExistingBook(bookId);
        if(result.id){
          return <IBookResponse>(new BookModel(result));
        }else{

@@ -1,4 +1,5 @@
 import {IInventoryDocument} from '../data-abstracts/repositories/inventory';
+import { IBookedResponse } from '../../service-layer/responses/booked/IBookedResponse';
 
 
 export class InventoryModel {
@@ -14,12 +15,12 @@ export class InventoryModel {
     return (this._inventoryModel.id).toString();
   }
 
-  get bookRef(): string {
-    return this._inventoryModel.bookRef;
+  get bookIdRef(): string {
+    return this._inventoryModel.bookIdRef;
   }
 
-  get crntBookedRef(): string {
-    return this._inventoryModel.crntBookedRef;
+  get booked(): IBookedResponse {
+    return this._inventoryModel.booked;
   }
 
   get available(): boolean{

@@ -22,11 +22,17 @@ export class InventoryDataAgent{
       if(! objectId.isValid(inventory.bookRef)){
             return  {thrown:true, status:401,  message: "incorrect inventory id"};
       }
-      let updatedInventory= await InventoryRepo.findById(inventory.bookRef);
-      if(updatedInventory){
+
+      let updatedInventory = await InventoryRepo.findById(inventory.bookRef);
+      if(!updatedInventory){
          return  {thrown:true, status:409,  message: "an inventory for the book ref does does not exist"};
       }
-      let savedResult = await inventory.save();
+      Object.keys( updatedInventory).forEach(item =>{
+              if(inventory[item] && inventory[item] !== undefined){
+                  updatedInventory[item] = inventory[item];
+              }
+        });
+      let savedResult = await updatedInventory.save();
       if(savedResult.errors){
           return  {status:422,  message: "db is currently unable to process request"};
       }
@@ -42,6 +48,7 @@ export class InventoryDataAgent{
       }
       return inventoryForBook;
   }
+
 
 
   async deleteInventory(inventoryId:string):Promise<any> {

@@ -2,13 +2,10 @@ import mongoose = require('mongoose');
 import {
   BookedExpireEventRepo,
   IBookedExpireEventDocument,
-  BookedExpireEventSchema
   } from '../data-abstracts/repositories/booked';
 
 import { logger } from '../../middleware/common/logging';
 import { IInventoryDocument } from '../data-abstracts/repositories/inventory';
-
-
 
 export class BookedExpireEventDataAgent{
     async createBookedExpireEvent( bookedExpireEvent:any):Promise<any> {

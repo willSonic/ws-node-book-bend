@@ -1,4 +1,5 @@
 import { IMessageDocument } from '../data-abstracts/repositories/message';
+import { IUserResponse } from '../../service-layer/responses';
 
 
 export class MessageModel {
@@ -12,8 +13,8 @@ export class MessageModel {
      return this._messageModel.id;
   }
 
-  get userRef(): string {
-     return this._messageModel.userRef;
+  get user(): IUserResponse {
+     return this._messageModel.user;
   }
 
   get messageType(): string {

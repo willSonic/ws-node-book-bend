@@ -1,7 +1,8 @@
-import {  Document }   from 'mongoose';
+import {  Document, Types }   from 'mongoose';
+import { IBookedDocument } from './IBookedDocument';
 
 export interface IBookedExpireEventDocument extends Document{
   id: string,
-  bookedRef:string,
+  booked:IBookedDocument,
   createdAt: Date,
 }

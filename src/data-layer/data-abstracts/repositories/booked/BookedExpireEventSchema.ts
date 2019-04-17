@@ -7,9 +7,9 @@ import { borrowerRules } from '../../../../business-layer/utils/bizRules';
  * @private
  */
  const  BookedExpireEventSchema:Schema = new Schema({
-  bookedRef:{
+  booked:{
         type: Schema.Types.ObjectId,
-        ref: 'Book',
+        ref: 'booked',
         required: true,
   },
   createdAt: {

@@ -9,9 +9,9 @@ import { IProfileDocument } from './IProfileDocument';
 
  const ProfileSchema:Schema = new Schema({
 
-  userRef:{
+  user:{
         type: Schema.Types.ObjectId,
-        ref: 'User',
+        ref: 'user',
         required: true,
   },
   checkedOutCount:  {
@@ -25,33 +25,33 @@ import { IProfileDocument } from './IProfileDocument';
                 },
 
  // message id
-  messageRefs:[{
+  messages:[{
         type: Schema.Types.ObjectId,
-        ref: 'Message',
+        ref: 'message',
         required: true,
-        }],
+  }],
 
  // comment id
-  commentRefs:[{
+  comments:[{
         type: Schema.Types.ObjectId,
-        ref: 'Comment',
+        ref: 'comment',
          required: true,
         }],
 
  // bookedRefs
-   bookedRefs:[{
+   booksOut:[{
         type: Schema.Types.ObjectId,
-        ref: 'Booked',
-       required: true,
+        ref: 'booked',
+        required: true,
         }],
 
 // waitlistRefs
-   waitlistRefs:[{
+   inventories:[{
         type: Schema.Types.ObjectId,
-        ref: 'Inventory',
+        ref: 'inventory',
         required: true,
         }],
-//interest catagories from books checked out
+//interest categories from books checked out
    interestCategories:[{
         type: String,
         required: true,

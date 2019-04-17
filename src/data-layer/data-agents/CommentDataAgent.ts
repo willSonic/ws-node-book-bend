@@ -18,10 +18,17 @@ export class CommentDataAgent {
             return  {thrown:true, status:401,  message: "incorrect comment id"};
       }
       let resultCommentById = await CommentRepo.findById(comment.id);
-      if(resultCommentById){
+      if(!resultCommentById){
          return  {thrown:true, status:409,  message: "this comment does not exist"};
       }
-      let savedResult = await comment.save();
+
+      Object.keys( resultCommentById).forEach(item =>{
+              if(comment[item] && comment[item] !== undefined){
+                  resultCommentById[item] = comment[item];
+              }
+      });
+
+      let savedResult = await resultCommentById.save();
       if(savedResult.errors){
           return  {status:422,  message: "db is currently unable to process request"};
       }

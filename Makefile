@@ -2,8 +2,8 @@
 all:
 
 
-CONTAINER_NAME = ws-node-book-bend-container
-IMAGE_NAME = local-ws-node-book-bend-dev
+CONTAINER_NAME = ws-node-book-bin-container
+IMAGE_NAME = local-ws-node-book-bin-dev
 
 build-clean:
 	rm -rf node_modules
@@ -12,7 +12,7 @@ build-clean:
 clean: build-clean
 
 build:
-	docker build -t  ws-node-demo -f  .
+	docker build -t  ws-node-book-bin -f  .
 
 build-dev:
 	docker build -t $(IMAGE_NAME) -f Dockerfile.dev .

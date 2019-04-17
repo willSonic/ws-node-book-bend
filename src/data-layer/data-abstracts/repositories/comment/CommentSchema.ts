@@ -14,12 +14,12 @@ const CommentSchema:Schema = new Schema({
   },
   bookRef:{
       type: Schema.Types.ObjectId,
-      ref: 'Book',
+      ref: 'book',
       required: true,
   },
   userRef:{
         type: Schema.Types.ObjectId,
-        ref: 'User',
+        ref: 'user',
         required: true,
   },
   createdAt: {

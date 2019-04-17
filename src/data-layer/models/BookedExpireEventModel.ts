@@ -1,5 +1,6 @@
 import { Document } from 'mongoose';
 import { IBookedExpireEventDocument } from '../data-abstracts/repositories/booked';
+import { IBookedResponse } from '../../service-layer/responses/booked/IBookedResponse';
 
 export class BookedExpireEventModel {
 
@@ -13,8 +14,8 @@ export class BookedExpireEventModel {
     return (this._bookedExpireEventModel.id).toString();
   }
 
-  get bookedRef(): string {
-    return this._bookedExpireEventModel.bookedRef;
+  get booked(): IBookedResponse {
+    return this._bookedExpireEventModel.booked;
   }
 
   get createdAt(): Date {

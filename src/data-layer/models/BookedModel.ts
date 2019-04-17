@@ -1,4 +1,5 @@
 import { IBookedDocument } from '../data-abstracts/repositories/booked';
+import { IBookResponse, IUserResponse } from '../../service-layer/responses';
 
 
 export class BookedModel {
@@ -13,13 +14,13 @@ export class BookedModel {
     return (this._bookedModel.id).toString();
   }
 
-  get bookRef(): string {
-    return this._bookedModel.bookRef;
+  get book(): IBookResponse {
+    return this._bookedModel.book;
   }
 
 
-  get userRef(): string {
-    return this._bookedModel.userRef;
+  get user(): IUserResponse {
+    return this._bookedModel.user;
   }
 
   get returnDate(): Date {

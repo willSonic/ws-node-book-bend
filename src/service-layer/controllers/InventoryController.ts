@@ -4,15 +4,14 @@ import { forEach, pick} from 'lodash';
 import { IInventoryCreateRequest, IInventoryUpdateRequest } from '../request';
 import { IInventoryResponse, IErrorResponse, ICommentResponse } from '../responses';
 
-import { InventoryDataAgent } from '../../data-layer/data-agents/InventoryDataAgent';
 import { InventoryModel } from '../../data-layer/models/InventoryModel';
 
 import { logger } from '../../middleware/common/logging';
+import { DataAgentServices as dataAgent } from '../../data-layer/data-agents';
 
 
 @Route('Inventory')
 export class InventoryController extends Controller{
-  inventoryDataAgent:InventoryDataAgent = new InventoryDataAgent();
 
   @Security('api_key')
   @Post()
@@ -21,7 +20,7 @@ export class InventoryController extends Controller{
     @Header('x-access-token') authentication: string
   ): Promise<IInventoryResponse> {
 
-      let result = await this.inventoryDataAgent.createNewInventory(request);
+      let result = await dataAgent.inventoryDA.createNewInventory(request);
       if(result.id){
          return <IInventoryResponse >( new InventoryModel(result));
       }else{
@@ -35,7 +34,7 @@ export class InventoryController extends Controller{
     @Body()  request:IInventoryUpdateRequest,
     @Header('x-access-token') authentication: string
   ): Promise<IInventoryResponse> {
-      let result = await this.inventoryDataAgent.updateInventory(request);
+      let result = await dataAgent.inventoryDA.updateInventory(request);
       if(result.id){
          return <IInventoryResponse >( new InventoryModel(result));
       }else{
@@ -49,7 +48,7 @@ export class InventoryController extends Controller{
     @Path() bookId: string,
     @Header('x-access-token') authentication: string
   ): Promise<IInventoryResponse> {
-      const result = await this.inventoryDataAgent.getInventoryByBookRef(bookId)
+      const result = await dataAgent.inventoryDA.getInventoryByBookRef(bookId)
       if(result.id){
          return <IInventoryResponse >( new InventoryModel(result));
       }else{

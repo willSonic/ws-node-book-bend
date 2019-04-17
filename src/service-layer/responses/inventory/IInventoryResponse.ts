@@ -1,7 +1,9 @@
+import { IBookedResponse } from '../booked/IBookedResponse';
+
 export interface IInventoryResponse {
   id?: string;
-  bookRef?: string
-  crntBookedRef?:string;
+  bookIdRef?: string
+  booked?:IBookedResponse;
   available?: boolean;
   waitList?: Array<{  userRef:string,  requestDate: Date }>
   createdAt?: Date;

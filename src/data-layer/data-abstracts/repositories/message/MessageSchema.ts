@@ -9,9 +9,9 @@ import { IMessageDocument } from './IMessageDocument';
 
  const MessageSchema:Schema = new Schema({
 
-  userRef:{
+  user:{
         type: Schema.Types.ObjectId,
-        ref: 'User',
+        ref: 'user',
         required: true,
   },
 

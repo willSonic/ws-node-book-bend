@@ -4,7 +4,6 @@ import {
  IProfileDocument
  } from '../data-abstracts/repositories/profile';
 import { logger } from '../../middleware/common/logging';
-import { UserRepo } from '../data-abstracts/repositories/user';
 
 
 export class ProfileDataAgent{
@@ -26,47 +25,39 @@ export class ProfileDataAgent{
       return newProfileResult;
   }
 
-  async getProfileByUserRef(userRef:string):Promise<any> {
-      let profile =  await ProfileRepo.find({ userRef : userRef});
+  async getProfileByUserId(userId:string):Promise<any> {
+      let profile =  await ProfileRepo.find({ userId : userId})
+        .populate('user')
+        .populate('messages')
+        .populate('comments')
+        .populate('bookedOut')
+        .populate({ path:'inventories.waitList', match:{userId: {   $eq: userId} }});
       if(!profile){
             return  {thrown:true, status:404,  message: "Profile for this User does not exit"};
       }
       return profile;
   }
 
-
-  async getProfileById( profileId:string):Promise<any>{
-      let objectId = mongoose.Types.ObjectId;
-      if(! objectId.isValid(profileId)){
-            return  {status:401,  message: "incorrect profile id"};
-      }
-      console.info('ProfileDataAgent-- getProfileById - profileId =', profileId)
-      let profileResult = await ProfileRepo.findById(profileId);
-      if(profileResult.errors){
-          return  {
-            thrown:true,
-            status:422,
-            message: "db is currently  unable to process Book find by Id request"
-            };
-      }
-      return profileResult;
-  }
   async updateProfile(profile:any):Promise<any> {
       let objectId = mongoose.Types.ObjectId;
       if(! objectId.isValid(profile.id)){
             return  {thrown:true, status:401,  message: "incorrect profiled id"};
       }
       let resultProfileById = await ProfileRepo.findById(profile.id);
-      if(resultProfileById){
+      if(!resultProfileById){
          return  {thrown:true, status:409,  message: "this user Profile does not exist"};
       }
-      let savedResult = await resultUserById.save();
+      Object.keys( resultProfileById).forEach(item =>{
+              if(profile[item] && profile[item] !== undefined){
+                  resultProfileById[item] = profile[item];
+              }
+        });
+      let savedResult = await resultProfileById.save();
       if(savedResult.errors){
           return  {status:422,  message: "db is currently unable to process request"};
       }
 
       return savedResult;
-
   }
   async deleteExistingProfile(profileId:string):Promise<any> {
       let objectId = mongoose.Types.ObjectId;

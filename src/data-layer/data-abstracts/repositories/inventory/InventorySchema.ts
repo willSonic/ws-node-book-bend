@@ -8,16 +8,14 @@ import { IInventoryDocument } from './IInventoryDocument';
  * @private
  */
 const InventorySchema:Schema = new Schema({
-  bookRef:{
-        type: Schema.Types.ObjectId,
-        ref: 'Book',
+  bookIdRef:{
+        type: String,
         required: true,
      },
 
-  crntBookedRef:{
+  booked:{
         type: Schema.Types.ObjectId,
-        ref: 'Booked',
-        required: true,
+        ref: 'booked',
       },
 
   available: {
@@ -26,9 +24,8 @@ const InventorySchema:Schema = new Schema({
        },
 
   waitList: [{
-          userRef:{
-            type: Schema.Types.ObjectId,
-            ref: 'User',
+          userId:{
+            type: String,
             required: true,
           },
           requestDate: {

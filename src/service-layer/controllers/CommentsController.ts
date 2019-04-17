@@ -2,14 +2,12 @@ import { Route, Response, Get, Post, Patch, Header, Body, Security, Controller, 
 
 import { ICommentCreateRequest, ICommentUpdateRequest } from '../request';
 import { ICommentResponse, ICommentResponses, IErrorResponse } from '../responses';
-
-import { CommentDataAgent } from '../../data-layer/data-agents/CommentDataAgent';
 import { CommentModel } from '../../data-layer/models/CommentModel';
+import { DataAgentServices as dataAgent } from '../../data-layer/data-agents';
 import { logger } from '../../middleware/common/logging';
 
 @Route('Comments')
 export class CommentsController extends Controller{
-  commentDataAgent:CommentDataAgent = new CommentDataAgent();
 
   @Security('api_key')
   @Post()
@@ -17,7 +15,7 @@ export class CommentsController extends Controller{
     @Body()  request:ICommentCreateRequest,
     @Header('x-access-token') authentication: string
   ): Promise<ICommentResponse> {
-      let result = await this.commentDataAgent.createNewComment(request);
+      let result = await dataAgent.commentDA.createNewComment(request);
       if(result.id){
          return <ICommentResponse>( new CommentModel(result))
       }else{
@@ -32,7 +30,7 @@ export class CommentsController extends Controller{
     @Body()  request:ICommentUpdateRequest,
     @Header('x-access-token') authentication: string
   ): Promise<ICommentResponse> {
-      let result = await this.commentDataAgent.updateComment(request);
+      let result = await dataAgent.commentDA.updateComment(request);
       if(result.id){
          return <ICommentResponse>( new CommentModel(result))
       }else{
@@ -47,7 +45,7 @@ export class CommentsController extends Controller{
     @Path() userId: string,
     @Header('x-access-token') authentication: string
     ): Promise<ICommentResponses> {
-    const results = await this.commentDataAgent.getAllCommentsByUserId(userId);
+    const results = await dataAgent.commentDA.getAllCommentsByUserId(userId);
     if(!results.hasOwnProperty('throw')){
          let userComments = results.map( comment => new CommentModel(comment));
          return <ICommentResponses>( userComments)
@@ -63,7 +61,7 @@ export class CommentsController extends Controller{
     @Path() bookId: string,
     @Header('x-access-token') authentication: string
     ): Promise<ICommentResponses> {
-    const results = await this.commentDataAgent.getAllCommentsByBookId(bookId);
+    const results = await dataAgent.commentDA.getAllCommentsByBookId(bookId);
     if(!results.hasOwnProperty('throw')){
          let userComments = results.map( comment => new CommentModel(comment));
          return <ICommentResponses>( userComments)
@@ -80,7 +78,7 @@ export class CommentsController extends Controller{
     @Path() commentId: string,
     @Header('x-access-token') authentication: string
   ): Promise<ICommentResponse> {
-      let result = await this.commentDataAgent.deleteComment(commentId);
+      let result = await dataAgent.commentDA.deleteComment(commentId);
       if(result.id){
          return <ICommentResponse>( new CommentModel(result))
       }else{

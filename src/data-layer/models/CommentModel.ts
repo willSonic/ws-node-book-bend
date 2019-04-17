@@ -1,4 +1,5 @@
 import {ICommentDocument} from '../data-abstracts/repositories/comment';
+import { IBookResponse, IUserResponse } from '../../service-layer/responses';
 
 export class CommentModel {
 
@@ -12,13 +13,13 @@ export class CommentModel {
     return (this._commentModel.id).toString();
   }
 
-  get bookRef(): string {
-    return this._commentModel.bookRef;
+  get book(): IBookResponse {
+    return this._commentModel.book;
   }
 
 
-  get userRef(): string {
-    return this._commentModel.userRef;
+  get user(): IUserResponse {
+    return this._commentModel.user;
   }
 
   get text(): string{
