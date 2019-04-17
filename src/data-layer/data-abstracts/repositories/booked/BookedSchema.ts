@@ -8,12 +8,13 @@ import { borrowerRules, createDate } from '../../../../business-layer/utils/bizR
  * @private
  */
  const  BookedSchema:Schema = new Schema({
-   User:{
+   user:{
         type: Schema.Types.ObjectId,
         ref: 'user',
         required: true,
   },
-  bookRef:{
+
+  book:{
         type: Schema.Types.ObjectId,
         ref: 'book',
         required: true,

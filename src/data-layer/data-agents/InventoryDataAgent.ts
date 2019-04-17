@@ -41,6 +41,15 @@ export class InventoryDataAgent{
   }
 
 
+  async getInventoryByGoogleId(googleId):Promise<any>{
+      let inventoryForBook =  await InventoryRepo.find({ "book.googleId" : googleId});
+      if(!inventoryForBook){
+            return  {thrown:true, status:404,  message: "inventory does not exit for this book"};
+      }
+      return inventoryForBook;
+
+  }
+
   async getInventoryByBookRef(bookRef:string):Promise<any> {
       let inventoryForBook =  await InventoryRepo.findOne({ bookRef : bookRef});
       if(!inventoryForBook){

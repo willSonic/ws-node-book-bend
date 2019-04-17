@@ -43,7 +43,20 @@ export class BookingServices{
               }
        }
 
-       //3 -- book - bookDataAgent createOrFindBook()
+       const book = await dataAgent.
+        bookDA.
+        createOrFindBook(checkoutRequest.bookId)
+
+
+       //3 -- get book by id == google id
+       // - inventoryDA.getInventoryByGoogleId()
+       const inventory = await dataAgent.
+        inventoryDA.
+        getInventoryByGoogleId(checkoutRequest.bookId)
+        //if inventory exist and it is available
+        // -add user to
+        //
+        //
        //4 -- inventory == inventoryDataAgent createOrFindInventory(BookRef)
         // -- if  available status  is False get
         //       get bookedDataAgent with  inventory,crntBookedRef
