@@ -1,10 +1,13 @@
+import { IUserResponse } from '../../responses';
+import { IUserDocument } from '../../../data-layer/data-abstracts/repositories/user';
+
 export interface  IProfileCreateRequest{
-  userRef:string,
+  user:string,
   checkedOutCount?: number,
   waitListCount?: number ,
   commentRefs?:string[],
   messageRefs?: string[],
-  bookedRefs?: string[],
-  waitlistRefs?: string[],
+  booksOut?: string[],
+  waitList?: string[],
   interestCategories?: string[],
 }

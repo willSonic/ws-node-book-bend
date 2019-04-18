@@ -2,10 +2,10 @@ import { IBookedResponse } from '../booked/IBookedResponse';
 
 export interface IInventoryResponse {
   id?: string;
-  bookIdRef?: string
+  bookGoogleId?: string
   booked?:IBookedResponse;
   available?: boolean;
-  waitList?: Array<{  userRef:string,  requestDate: Date }>
+  waitList?: Array<{  userId:string,  requestDate: Date }>
   createdAt?: Date;
   modifiedAt?: Date
 }

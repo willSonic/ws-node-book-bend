@@ -1,11 +1,14 @@
+import { IBookedResponse } from '../../responses/booked/IBookedResponse';
+import { ICommentResponse, IMessageResponse, IUserResponse } from '../../responses';
+
 export interface IProfileUpdateRequest{
   id: string;
-  userRef:string,
+  user:IUserResponse,
   checkedOutCount?: number,
-  waitListCount?: number,
-  commentRefs?:Array<string>
-  messageRefs?:Array<string>
-  bookedRefs?:Array<string>
-  waitlistRefs?:Array<string>
-  interestCategories?:Array<string>;
+  waitListCount?: number ,
+  commentRefs?:string[],
+  messageRefs?: string[],
+  booksOut?: string[],
+  waitList?: string[],
+  interestCategories?:Array<string>,
 }

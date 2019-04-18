@@ -15,8 +15,8 @@ export class InventoryModel {
     return (this._inventoryModel.id).toString();
   }
 
-  get bookIdRef(): string {
-    return this._inventoryModel.bookIdRef;
+  get bookGoogleId(): string {
+    return this._inventoryModel.bookGoogleId;
   }
 
   get booked(): IBookedResponse {
@@ -27,7 +27,7 @@ export class InventoryModel {
     return this._inventoryModel.available;
   }
 
-  get waitList(): Array<{ userRef:string,  requestDate: Date}> {
+  get waitList(): Array<{ userId:string,  requestDate: Date}> {
     return this._inventoryModel.waitList;
   }
   get createdAt(): Date {

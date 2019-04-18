@@ -5,11 +5,11 @@ import { logger } from '../../middleware/common/logging';
 
 export class BookDataAgent{
 
-  async createOrFindBook(book:any):Promise<any> {
+  async createNewBook(book:any):Promise<any> {
       let newBook = <IBookDocument>(book);
-      let previousBook =  await BookRepo.findOne({ googleId : newBook.googleId});
-      if(previousBook && !previousBook.errors){
-        return previousBook;
+      let previousBook =  await BookRepo.findOne({ googleId : newBook.id});
+      if(previousBook){
+         return  {thrown:true, success:false, status:409,  message: "book was previously created"};
       }
       let newBookResult =  await BookRepo.create(newBook);
       if(newBookResult.errors){

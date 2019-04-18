@@ -1,7 +1,7 @@
 export interface IInventoryUpdateRequest{
   id:string;
-  bookRef?: string;
-  crntBookedRef?: string;
+  bookGoogleId: string;
+  booked?: string;
   available?: boolean;
   waitList?: Array<any>;
 }

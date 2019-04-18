@@ -3,11 +3,11 @@ import { IBookedDocument } from '../booked';
 
 export interface IInventoryDocument extends Document {
   id: string,
-  bookIdRef:string,
+  bookGoogleId:string,
   booked:IBookedDocument,
   available: boolean,
   waitList: [{
-        userRef:string,
+        userId:string,
         requestDate: Date,
     }]
   createdAt: Date,

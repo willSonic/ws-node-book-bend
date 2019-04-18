@@ -11,6 +11,7 @@ export {  IBookUpdateRequest   } from './book/IBookUpdateRequest';
 export { IProfileFetchByIdRequest }  from './profile/IProfileFetchByIdRequest';
 export { IProfileCreateRequest } from './profile/IProfileCreateRequest';
 export { IProfileUpdateRequest }  from './profile/IProfileUpdateRequest';
+export { IProfileAddBookRequest } from './profile/IProfileAddBookRequest';
 
 export {  IInventoryCreateRequest   } from './inventory/IInventoryCreateRequest';
 export {  IInventoryUpdateRequest   } from './inventory/IInventoryUpdateRequest';

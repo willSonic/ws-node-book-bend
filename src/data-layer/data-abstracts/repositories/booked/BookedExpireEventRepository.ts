@@ -8,7 +8,7 @@ export type BookedExpireEventMod = Model<IBookedExpireEventDocument>;
 
 const BookedExpireEventRepo:BookedExpireEventMod =
 MongooseAccess.mongooseConnection.model<IBookedExpireEventDocument>
-    ("booked", BookedExpireEventSchema);
+    ("booked_expire_event", BookedExpireEventSchema);
 
 
 BookedExpireEventRepo.watch().on('change', (change)=>{

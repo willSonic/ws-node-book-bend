@@ -6,7 +6,7 @@ export class InventoryDataAgent{
 
   async createNewInventory(inventory:any):Promise<any> {
       let newInventory = <IInventoryDocument>(inventory);
-      let previousInventory =  await InventoryRepo.findOne({ bookRef: inventory.bookRef});
+      let previousInventory =  await InventoryRepo.findOne({ bookGoogleId: inventory.book.id});
       if(previousInventory){
          return  {thrown:true, success:false, status:409,  message: "inventory for this book was previously established"};
       }
@@ -19,11 +19,11 @@ export class InventoryDataAgent{
 
  async updateInventory(inventory:any):Promise<any> {
       let objectId = mongoose.Types.ObjectId;
-      if(! objectId.isValid(inventory.bookRef)){
+      if(! objectId.isValid(inventory.id)){
             return  {thrown:true, status:401,  message: "incorrect inventory id"};
       }
 
-      let updatedInventory = await InventoryRepo.findById(inventory.bookRef);
+      let updatedInventory = await InventoryRepo.findById(inventory.id);
       if(!updatedInventory){
          return  {thrown:true, status:409,  message: "an inventory for the book ref does does not exist"};
       }
@@ -42,7 +42,7 @@ export class InventoryDataAgent{
 
 
   async getInventoryByGoogleId(googleId):Promise<any>{
-      let inventoryForBook =  await InventoryRepo.find({ "book.googleId" : googleId});
+      let inventoryForBook =  await InventoryRepo.find({ "bookGoogleId" : googleId});
       if(!inventoryForBook){
             return  {thrown:true, status:404,  message: "inventory does not exit for this book"};
       }

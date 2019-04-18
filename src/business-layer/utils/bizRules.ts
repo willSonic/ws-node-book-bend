@@ -16,3 +16,28 @@ export const borrowerRules = {
 export const createDate = ( time:number ) =>{
    return new Date(Date.now() + time);
 };
+
+
+export const messageTypes = {
+    BOOK_CHECKED_OUT:'BOOK_CHECKED_OUT',
+    BOOK_CHECKED_IN:'BOOK_CHECKED_IN',
+    BOOK_FORCE_CHECKED_IN:'BOOK_FORCE_CHECKED_IN',
+    BOOK_USER_WAIT_LISTED:'BOOK_USER_WAIT_LISTED'
+};
+
+export const createMessageText = (type, options)=>{
+    let message='';
+    switch(type){
+        case messageTypes.BOOK_CHECKED_OUT:
+            message = `You have checked out ${ options.bookTitle } on`+
+                       ` ${ options.checkOutDate } and it will need to be returned`+
+                        `${ options.checkInDate }.`;
+        break;
+        case messageTypes.BOOK_USER_WAIT_LISTED:
+            message = `You have been added to the waitList ${ options.bookTitle }.`;
+         break;
+    }
+    return message;
+};
+
+

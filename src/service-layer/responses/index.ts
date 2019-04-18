@@ -3,6 +3,7 @@ export { IBookResponse }  from './book/IBookResponse';
 export { IMessageResponse, IMessageResponses } from './message/IMessageResponse';
 export { IProfileWithUserResponse  }from './profile/IProfileWithUserResponse';
 export { IProfileResponse } from './profile/IProfileResponse';
+export { IProfileAddBookResponse } from './profile/IProfileAddBookResponse';
 export { ICommentResponse , ICommentResponses}  from './comment/ICommentResponse';
 export { IInventoryResponse }  from './inventory/IInventoryResponse';
 export { IErrorResponse }  from './IErrorResponse';

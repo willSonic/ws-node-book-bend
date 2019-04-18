@@ -8,7 +8,7 @@ import { IInventoryDocument } from './IInventoryDocument';
  * @private
  */
 const InventorySchema:Schema = new Schema({
-  bookIdRef:{
+  bookGoogleId:{
         type: String,
         required: true,
      },

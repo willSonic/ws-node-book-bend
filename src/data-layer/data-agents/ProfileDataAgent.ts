@@ -10,7 +10,7 @@ export class ProfileDataAgent{
 
   async createNewProfile(profile:any):Promise<any> {
       let newProfile = <IProfileDocument>(profile);
-      let previousProfile =  await ProfileRepo.findOne({ userRef : newProfile.userRef});
+      let previousProfile =  await ProfileRepo.findOne({ user : newProfile.user});
       if(previousProfile){
          return  {thrown:true, success:false, status:409,  message: "Profile has already been added"};
       }
@@ -24,9 +24,21 @@ export class ProfileDataAgent{
       }
       return newProfileResult;
   }
+  async getProfileById(profileId:string):Promise<any> {
 
+      let profile =  await ProfileRepo.find({ id : profileId})
+        .populate('user')
+        .populate('messages')
+        .populate('comments')
+        .populate('bookedOut')
+        .populate('inventories');
+      if(!profile){
+            return  {thrown:true, status:404,  message: "Profile for this User does not exit"};
+      }
+      return profile;
+  }
   async getProfileByUserId(userId:string):Promise<any> {
-      let profile =  await ProfileRepo.find({ userId : userId})
+      let profile =  await ProfileRepo.find({ user : userId})
         .populate('user')
         .populate('messages')
         .populate('comments')

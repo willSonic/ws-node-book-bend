@@ -40,6 +40,9 @@ services:
       - MONGODB_REPLICA_SET_MODE=secondary
       - MONGODB_PRIMARY_HOST=mongodb-primary
       - MONGODB_PRIMARY_PORT_NUMBER=27017
+      - MONGODB_ADVERTISED_HOSTNAME=mongodb-secondary
+    ports:
+      - "27018:27017"
 
   mongodb-arbiter:
     image: 'bitnami/mongodb:4.1'
@@ -49,6 +52,9 @@ services:
       - MONGODB_REPLICA_SET_MODE=arbiter
       - MONGODB_PRIMARY_HOST=mongodb-primary
       - MONGODB_PRIMARY_PORT_NUMBER=27017
+      - MONGODB_ADVERTISED_HOSTNAME=mongodb-arbiter
+    ports:
+      - "27019:27017"
 
   redis:
     image: 'bitnami/redis:5.0'

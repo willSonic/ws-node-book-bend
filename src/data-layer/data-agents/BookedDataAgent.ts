@@ -5,6 +5,7 @@ import {
 } from '../data-abstracts/repositories/booked';
 import { logger } from '../../middleware/common/logging';
 import { borrowerRules, createDate } from '../../business-layer/utils/bizRules';
+import { UserRepo } from '../data-abstracts/repositories/user';
 
 
 export class BookedDataAgent{
@@ -13,7 +14,7 @@ export class BookedDataAgent{
       let newBooked = <IBookedDocument>(booked);
 
       let previousBooked =  await BookedRepo.findOne(
-        { userRef : newBooked.userRef, bookRef:newBooked.bookRef }
+        { user : newBooked.user, book:newBooked.book }
         );
       if(previousBooked){
          previousBooked.active = true;
@@ -40,6 +41,27 @@ export class BookedDataAgent{
       return newBookedResult;
   }
 
+  async updateBooked(booked:any):Promise<any>{
+      let objectId = mongoose.Types.ObjectId;
+      if(! objectId.isValid(booked.id)){
+            return  {thrown:true, status:401,  message: "incorrect booked id"};
+      }
+      let resultBookedById = await BookedRepo.findById(booked.id);
+      if(!resultBookedById){
+         return  {thrown:true, status:409,  message: "this booked record does not exist"};
+      }
+
+      Object.keys( resultBookedById).forEach(item =>{
+              if(booked[item] && booked[item] !== undefined){
+                  resultBookedById[item] = booked[item];
+              }
+        });
+      let savedResult = await resultBookedById.save();
+      if(savedResult.errors){
+          return  {status:422,  message: "db is currently unable to process request"};
+      }
+      return savedResult;
+  }
 
   async getBookedById( bookedId:string):Promise<any>{
       let objectId = mongoose.Types.ObjectId;

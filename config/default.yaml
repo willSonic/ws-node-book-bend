@@ -9,7 +9,7 @@ auth:
 
 mongo:
     urlClient: 'mongodb://127.0.0.1:27017/book-bin'
-    urlDocker: 'mongodb://mongodb-primary:27017/book-bin'
+    urlDocker: 'mongodb://ws-node-book-bend_mongodb-primary_1:27017/book-bin'
 
 redis:
     TTL: 86400

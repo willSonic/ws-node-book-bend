@@ -19,8 +19,8 @@
                 "description":"Operations concerning books"
             },
             {
-                "name":"inventory",
-                "description":"Operations concerning inventory ( checkouts, wait-list)"
+                "name":"profile",
+                "description":"Operations concerning a user's profile"
             },
             {
                 "name":"comment",

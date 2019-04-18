@@ -4,7 +4,7 @@ import { AuthorizationsController } from './../../service-layer/controllers/Auth
 import { UsersController } from './../../service-layer/controllers/UsersController';
 import { CommentsController } from './../../service-layer/controllers/CommentsController';
 import { BooksController } from './../../service-layer/controllers/BooksController';
-import { InventoryController } from './../../service-layer/controllers/InventoryController';
+import { ProfilesController } from './../../service-layer/controllers/ProfileController';
 import { expressAuthentication } from './../../business-layer/security/Authentication';
 import * as express from 'express';
 
@@ -24,7 +24,7 @@ const models: TsoaRoute.Models = {
             "password": { "dataType": "string", "required": true },
         },
     },
-    "IMessageResponse": {
+    "ISuccessResponse": {
         "properties": {
             "success": { "dataType": "boolean", "required": true },
             "message": { "dataType": "string", "required": true },
@@ -55,11 +55,30 @@ const models: TsoaRoute.Models = {
             "admin": { "dataType": "boolean" },
         },
     },
+    "IBookResponse": {
+        "properties": {
+            "id": { "dataType": "string" },
+            "googleId": { "dataType": "string" },
+            "authors": { "dataType": "array", "array": { "dataType": "string" } },
+            "averageRating": { "dataType": "double" },
+            "description": { "dataType": "string" },
+            "imageLinks": { "dataType": "any" },
+            "pageCount": { "dataType": "double" },
+            "subtitle": { "dataType": "string" },
+            "title": { "dataType": "string" },
+            "categories": { "dataType": "array", "array": { "dataType": "string" } },
+            "ratingsCount": { "dataType": "double" },
+            "publishedDate": { "dataType": "datetime" },
+            "publisher": { "dataType": "string" },
+            "createdAt": { "dataType": "datetime" },
+            "modifiedAt": { "dataType": "datetime" },
+        },
+    },
     "ICommentResponse": {
         "properties": {
             "id": { "dataType": "string" },
-            "bookRef": { "dataType": "string" },
-            "userRef": { "dataType": "string" },
+            "book": { "ref": "IBookResponse" },
+            "user": { "ref": "IUserResponse" },
             "text": { "dataType": "string" },
             "createdAt": { "dataType": "datetime" },
             "modifiedAt": { "dataType": "datetime" },
@@ -82,27 +101,9 @@ const models: TsoaRoute.Models = {
     },
     "ICommentResponses": {
     },
-    "IBookResponse": {
-        "properties": {
-            "id": { "dataType": "string" },
-            "googleId": { "dataType": "string" },
-            "authors": { "dataType": "array", "array": { "dataType": "string" } },
-            "averageRating": { "dataType": "double" },
-            "description": { "dataType": "string" },
-            "imageLinks": { "dataType": "any" },
-            "pageCount": { "dataType": "double" },
-            "subtitle": { "dataType": "string" },
-            "title": { "dataType": "string" },
-            "categories": { "dataType": "array", "array": { "dataType": "string" } },
-            "ratingsCount": { "dataType": "double" },
-            "publishedDate": { "dataType": "datetime" },
-            "publisher": { "dataType": "string" },
-            "createdAt": { "dataType": "datetime" },
-            "modifiedAt": { "dataType": "datetime" },
-        },
-    },
     "IBookCreateRequest": {
         "properties": {
+            "userRef": { "dataType": "string" },
             "googleId": { "dataType": "string", "required": true },
             "authors": { "dataType": "array", "array": { "dataType": "string" }, "required": true },
             "averageRating": { "dataType": "double" },
@@ -117,38 +118,81 @@ const models: TsoaRoute.Models = {
             "publisher": { "dataType": "string", "required": true },
         },
     },
-    "IInventoryResponse": {
+    "IMessageResponse": {
+        "properties": {
+            "id": { "dataType": "string", "required": true },
+            "user": { "ref": "IUserResponse", "required": true },
+            "messageType": { "dataType": "string", "required": true },
+            "messageText": { "dataType": "string", "required": true },
+            "reviewedAt": { "dataType": "datetime", "required": true },
+            "modifiedAt": { "dataType": "datetime", "required": true },
+            "createdAt": { "dataType": "datetime", "required": true },
+        },
+    },
+    "IBookedResponse": {
         "properties": {
             "id": { "dataType": "string" },
-            "bookRef": { "dataType": "string" },
-            "currentUserRef": { "dataType": "string" },
-            "available": { "dataType": "boolean" },
-            "checkOutDate": { "dataType": "datetime" },
+            "user": { "ref": "IUserResponse", "required": true },
+            "book": { "ref": "IBookResponse", "required": true },
             "returnDate": { "dataType": "datetime" },
-            "waitList": { "dataType": "array", "array": { "dataType": "any" } },
+            "active": { "dataType": "boolean", "required": true },
             "createdAt": { "dataType": "datetime" },
             "modifiedAt": { "dataType": "datetime" },
         },
     },
-    "IInventoryCreateRequest": {
-        "properties": {
-            "bookRef": { "dataType": "string", "required": true },
-            "currentUserRef": { "dataType": "string", "required": true },
-            "available": { "dataType": "boolean", "required": true },
-            "checkOutDate": { "dataType": "string", "required": true },
-            "returnDate": { "dataType": "string", "required": true },
-            "waitList": { "dataType": "array", "array": { "dataType": "any" }, "required": true },
-        },
-    },
-    "IInventoryUpdateRequest": {
+    "IProfileResponse": {
         "properties": {
             "id": { "dataType": "string", "required": true },
-            "bookRef": { "dataType": "string" },
-            "currentUserRef": { "dataType": "string" },
-            "available": { "dataType": "boolean" },
-            "checkOutDate": { "dataType": "string" },
-            "returnDate": { "dataType": "string" },
+            "user": { "ref": "IUserResponse", "required": true },
+            "checkedOutCount": { "dataType": "double", "required": true },
+            "waitListCount": { "dataType": "double", "required": true },
+            "comments": { "dataType": "array", "array": { "ref": "ICommentResponse" } },
+            "messages": { "dataType": "array", "array": { "ref": "IMessageResponse" } },
+            "booksOut": { "dataType": "array", "array": { "ref": "IBookedResponse" } },
             "waitList": { "dataType": "array", "array": { "dataType": "any" } },
+            "interestCategories": { "dataType": "array", "array": { "dataType": "string" } },
+            "createdAt": { "dataType": "datetime", "required": true },
+            "modifiedAt": { "dataType": "datetime", "required": true },
+        },
+    },
+    "IProfileCreateRequest": {
+        "properties": {
+            "user": { "dataType": "string", "required": true },
+            "checkedOutCount": { "dataType": "double" },
+            "waitListCount": { "dataType": "double" },
+            "commentRefs": { "dataType": "array", "array": { "dataType": "string" } },
+            "messageRefs": { "dataType": "array", "array": { "dataType": "string" } },
+            "booksOut": { "dataType": "array", "array": { "dataType": "string" } },
+            "waitList": { "dataType": "array", "array": { "dataType": "string" } },
+            "interestCategories": { "dataType": "array", "array": { "dataType": "string" } },
+        },
+    },
+    "IProfileAddBookResponse": {
+        "properties": {
+            "isWaitListOption": { "dataType": "boolean", "required": true },
+            "bookId": { "dataType": "string" },
+            "listPosition": { "dataType": "double" },
+            "waitTime": { "dataType": "double" },
+            "profile": { "ref": "IProfileResponse" },
+        },
+    },
+    "IProfileAddBookRequest": {
+        "properties": {
+            "userId": { "dataType": "string", "required": true },
+            "book": { "ref": "IBookResponse", "required": true },
+        },
+    },
+    "IProfileUpdateRequest": {
+        "properties": {
+            "id": { "dataType": "string", "required": true },
+            "user": { "ref": "IUserResponse", "required": true },
+            "checkedOutCount": { "dataType": "double" },
+            "waitListCount": { "dataType": "double" },
+            "commentRefs": { "dataType": "array", "array": { "dataType": "string" } },
+            "messageRefs": { "dataType": "array", "array": { "dataType": "string" } },
+            "booksOut": { "dataType": "array", "array": { "dataType": "string" } },
+            "waitList": { "dataType": "array", "array": { "dataType": "string" } },
+            "interestCategories": { "dataType": "array", "array": { "dataType": "string" } },
         },
     },
 };
@@ -481,12 +525,11 @@ export function RegisterRoutes(app: express.Express) {
             const promise = controller.DeleteExistingBookById.apply(controller, validatedArgs as any);
             promiseHandler(controller, promise, response, next);
         });
-    app.post('/api/Inventory',
+    app.post('/api/Profiles',
         authenticateMiddleware([{ "api_key": [] }]),
         function(request: any, response: any, next: any) {
             const args = {
-                request: { "in": "body", "name": "request", "required": true, "ref": "IInventoryCreateRequest" },
-                authentication: { "in": "header", "name": "x-access-token", "required": true, "dataType": "string" },
+                request: { "in": "body", "name": "request", "required": true, "ref": "IProfileCreateRequest" },
             };
 
             let validatedArgs: any[] = [];
@@ -496,17 +539,17 @@ export function RegisterRoutes(app: express.Express) {
                 return next(err);
             }
 
-            const controller = new InventoryController();
+            const controller = new ProfilesController();
 
 
-            const promise = controller.CreateNewInventory.apply(controller, validatedArgs as any);
+            const promise = controller.createNewProfile.apply(controller, validatedArgs as any);
             promiseHandler(controller, promise, response, next);
         });
-    app.patch('/api/Inventory',
+    app.get('/api/Profiles/:profileId',
         authenticateMiddleware([{ "api_key": [] }]),
         function(request: any, response: any, next: any) {
             const args = {
-                request: { "in": "body", "name": "request", "required": true, "ref": "IInventoryUpdateRequest" },
+                profileId: { "in": "path", "name": "profileId", "required": true, "dataType": "string" },
                 authentication: { "in": "header", "name": "x-access-token", "required": true, "dataType": "string" },
             };
 
@@ -517,17 +560,17 @@ export function RegisterRoutes(app: express.Express) {
                 return next(err);
             }
 
-            const controller = new InventoryController();
+            const controller = new ProfilesController();
 
 
-            const promise = controller.UpdateInventory.apply(controller, validatedArgs as any);
+            const promise = controller.GetProfileById.apply(controller, validatedArgs as any);
             promiseHandler(controller, promise, response, next);
         });
-    app.get('/api/Inventory/byBook/:bookId',
+    app.post('/api/Profiles',
         authenticateMiddleware([{ "api_key": [] }]),
         function(request: any, response: any, next: any) {
             const args = {
-                bookId: { "in": "path", "name": "bookId", "required": true, "dataType": "string" },
+                request: { "in": "body", "name": "request", "required": true, "ref": "IProfileAddBookRequest" },
                 authentication: { "in": "header", "name": "x-access-token", "required": true, "dataType": "string" },
             };
 
@@ -538,10 +581,30 @@ export function RegisterRoutes(app: express.Express) {
                 return next(err);
             }
 
-            const controller = new InventoryController();
+            const controller = new ProfilesController();
 
 
-            const promise = controller.GetInventoryByBookId.apply(controller, validatedArgs as any);
+            const promise = controller.AddBookRequest.apply(controller, validatedArgs as any);
+            promiseHandler(controller, promise, response, next);
+        });
+    app.put('/api/Profiles',
+        authenticateMiddleware([{ "api_key": [] }]),
+        function(request: any, response: any, next: any) {
+            const args = {
+                request: { "in": "body", "name": "request", "required": true, "ref": "IProfileUpdateRequest" },
+            };
+
+            let validatedArgs: any[] = [];
+            try {
+                validatedArgs = getValidatedArgs(args, request);
+            } catch (err) {
+                return next(err);
+            }
+
+            const controller = new ProfilesController();
+
+
+            const promise = controller.UpdateProfile.apply(controller, validatedArgs as any);
             promiseHandler(controller, promise, response, next);
         });
 
