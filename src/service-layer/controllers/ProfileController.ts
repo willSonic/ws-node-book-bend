@@ -17,9 +17,11 @@ export class ProfilesController extends Controller{
     @Security('api_key')
     @Post()
     public async createNewProfile(
-      @Body()  request: IProfileCreateRequest): Promise<IProfileResponse> {
+      @Body()  request: IProfileCreateRequest,
+      @Header('x-access-token')  authentication: string ): Promise<IProfileResponse> {
        let userExist = await dataAgent.userDA.getUserById(request.user);
        if( userExist  &&   userExist.userName){
+             console.log( 'createNewProfile  userExist  = ', userExist)
              let newProfileAttempt = await dataAgent.
                 profileDA.createNewProfile(request);
              if(newProfileAttempt.id){
@@ -29,6 +31,8 @@ export class ProfilesController extends Controller{
                 throw newProfileAttempt;
              }
        }else{
+
+          console.log( 'createNewProfile  errir  = ', userExist)
           if(userExist){
             throw userExist;
           }else{
@@ -47,8 +51,10 @@ export class ProfilesController extends Controller{
     public async GetProfileById(
       profileId: string, @Header('x-access-token')
       authentication: string ): Promise<IProfileResponse> {
+      console.log( 'GetProfileById  profileId  = ', profileId)
        let profileResultById = await dataAgent.
           profileDA.getProfileById(profileId);
+      console.log( 'GetProfileById  profileResultById  = ', profileResultById)
        if( profileResultById && profileResultById.user){
               const aProfile = new ProfileModel(profileResultById);
               return <IProfileResponse>(aProfile);
@@ -66,11 +72,12 @@ export class ProfilesController extends Controller{
     }
 
     @Security('api_key')
-    @Post()
+    @Post("/addBook")
     public async AddBookRequest(
       @Body() request:IProfileAddBookRequest,
       @Header('x-access-token')
       authentication: string ): Promise<IProfileAddBookResponse> {
+      console.log( 'AddBookRequest  request  = ', request)
        const addRequestResult = await BookingServices.bookCheckOutService(request);
        if(addRequestResult && !addRequestResult.error){
           if(addRequestResult.hasOwnProperty('bookTitle')){

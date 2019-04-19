@@ -26,12 +26,14 @@ export class ProfileDataAgent{
   }
   async getProfileById(profileId:string):Promise<any> {
 
+      console.log('   --- getProfileById   profileId=',profileId)
       let profile =  await ProfileRepo.find({ id : profileId})
         .populate('user')
         .populate('messages')
         .populate('comments')
-        .populate('bookedOut')
+        .populate('booksOut')
         .populate('inventories');
+      console.log('   --- getProfileById   profile=',profile)
       if(!profile){
             return  {thrown:true, status:404,  message: "Profile for this User does not exit"};
       }

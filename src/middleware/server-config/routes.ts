@@ -531,6 +531,7 @@ export function RegisterRoutes(app: express.Express) {
             const args = {
                 request: { "in": "body", "name": "request", "required": true, "ref": "IProfileCreateRequest" },
             };
+            console.log('    ----/api/Profiles  request =', request)
 
             let validatedArgs: any[] = [];
             try {
