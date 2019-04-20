@@ -1,6 +1,7 @@
-import { IBookResponse } from '../../responses';
+import { IBookCreateRequest} from '..';
 
 export interface IProfileAddBookRequest{
   userId:string,
-  book:IBookResponse,
+  book:IBookCreateRequest,
+
 }

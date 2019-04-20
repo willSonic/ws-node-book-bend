@@ -23,7 +23,8 @@ const BookSchema:Schema = new Schema({
                  },
   description: {
                 type: String,
-                required: true
+                required: true,
+                max: 750,
              },
   imageLinks: {
     type: new Schema({
@@ -41,11 +42,9 @@ const BookSchema:Schema = new Schema({
                 },
   subtitle: {
                 type: String,
-                required: true
              },
   title: {
             type: String,
-            required: true
          },
 
   categories:  [{ type: String }],
@@ -56,7 +55,6 @@ const BookSchema:Schema = new Schema({
   publishedDate: Date,
   publisher: {
                 type: String,
-                required: true
              },
   createdAt: {
 	   type: Date,

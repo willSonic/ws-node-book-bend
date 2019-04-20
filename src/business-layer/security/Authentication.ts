@@ -32,6 +32,7 @@ async function expressAuthentication(request: express.Request, securityName: str
              return Promise.reject(new Error('jwt token user cannot be verified'));
            }
        }else {
+          console.log('----expressAuthentication  ---  payload =',payload)
           return Promise.reject(payload);
        }
     }else {

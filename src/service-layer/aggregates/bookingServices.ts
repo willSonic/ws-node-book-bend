@@ -13,6 +13,8 @@ async function updateUserProfile(
       profileResult:IProfileDocument,
       newBooked:IBookedDocument,
       waitList:boolean = false ):Promise<any>{
+
+
       const newMessageText = !waitList?
           createMessageText(messageTypes.BOOK_CHECKED_OUT,
             {
@@ -24,6 +26,8 @@ async function updateUserProfile(
             {
                        bookTitle:book.title,
                     });
+      console.log(' --- updateUserProfile -- book =', book);
+
 
       const newMessage = await dataAgent.messageDA.createNewMessage({
         user: profileResult.user.id,
@@ -37,7 +41,7 @@ async function updateUserProfile(
           profileResult.checkedOutCount += 1;
           profileResult.booksOut.push(newBooked.id);
           const newBookCategories = book.categories.filter(
-                 interest => profileResult.interestCategories.
+            (interest) => profileResult.interestCategories.
                     indexOf(interest)<0);
 
           if(newBookCategories.length>0){
@@ -49,6 +53,7 @@ async function updateUserProfile(
       }
 
       profileResult.messages.push(newMessage.id);
+
       const updatedProfile = await dataAgent.profileDA.
             updateProfile(profileResult);
 
@@ -56,44 +61,62 @@ async function updateUserProfile(
 }
 
 
-async function prepareProfileData(
-      bookRef:string,
+async function createBookedData(
+      book:IBookDocument,
       profileResult:IProfileDocument,
-      inventoriedBook:IInventoryDocument,
+      inventory:IInventoryDocument,
       waitList:boolean = false
    ):Promise<any>{
-     const prevBooked = profileResult.booksOut.filter( booked =>
-           booked.book.googleId === bookRef);
+     const prevBooked = profileResult.booksOut.filter( (booked) =>
+           booked.book.googleId === book.googleId);
+
      if(!waitList ){
          //create new Booked entity associating User and Book
-         const bookedUpdate:IBookedDocument  =  prevBooked.length>0?
-            await dataAgent.bookedDA.updateBooked({...prevBooked[0],active:true }):
-            await dataAgent.bookedDA.createNewBooked({
-              book: bookRef,
-              user: profileResult.user.id,
+         let bookedResult:IBookedDocument;
+         let inventoryResult:IInventoryDocument;
+         if( prevBooked.length>0 ){
+            bookedResult = await dataAgent.bookedDA.updateBooked(
+             {...prevBooked[0],active:true });
+         }else{
+            bookedResult =  await dataAgent.bookedDA.createNewBooked({
+              book: (book.id).toString(),
+              user: (profileResult.user.id).toString(),
               active: true
             });
+         }
+
          //create book check expire record to get event...
-         const  bookToExpire:IBookedExpireEventDocument =  await dataAgent.
-          bookedExpireEventDA.createBookedExpireEvent(
-            (bookedUpdate.id).toString());
+         const  bookedToExpire:IBookedExpireEventDocument =  await dataAgent.
+                bookedExpireEventDA.
+                createBookedExpireEvent((bookedResult._id).toString());
+
+         if(inventory.id){
+            inventoryResult =  await dataAgent.inventoryDA.
+                 updateInventory( {
+                 id:inventory.id,
+                 booked:(bookedResult._id).toString(),
+                 available:false,
+               });
+         }else{
+            inventoryResult = await dataAgent.
+              inventoryDA.
+              createNewInventory( {
+                 bookGoogleId: (book.googleId).toString(),
+                 booked:(bookedResult._id).toString(),
+                 available:false,
+               });
+         }
+
          //update entities
-         const updateInventory =  await dataAgent.inventoryDA.
-             updateInventory( {
-             id:inventoriedBook.id,
-             booked:bookedUpdate.id,
-             available:false,
-           });
-         return bookedUpdate;
+         return bookedResult;
      }else{
 
-        inventoriedBook.waitList.push({
+        inventory.waitList.push({
             userId: (profileResult.user.id).toString(),
             requestDate:new Date(),
         });
-
         const updateInventory =  await dataAgent.inventoryDA.
-             updateInventory( inventoriedBook);
+             updateInventory( inventory);
          return updateInventory;
      }
 
@@ -103,11 +126,14 @@ async function prepareProfileData(
 class BookingService{
    async bookCheckOutService( checkoutRequest:any):Promise<any>{
        //1 --  profile = get User Profile
+         console.log('createBookedData ---   checkoutRequest  =  ', checkoutRequest);
       let profileResult:IProfileDocument = await dataAgent
          .profileDA
          .getProfileByUserId(checkoutRequest.userId);
 
        //2
+
+       console.log('BookingService --bookCheckOutService profileResult =  ', profileResult  )
        // -- if checkout count greater than max return
       if(profileResult.checkedOutCount === borrowerRules.maxCheckout ){
           throw {
@@ -117,10 +143,11 @@ class BookingService{
               }
       }
        // -- if user currently has this booked checked out
-      if(profileResult.booksOut.some( booked =>
-               booked.book.googleId === checkoutRequest.book.id &&
-               booked.active  ) ){
-          throw {
+
+      if( profileResult.booksOut.some( (booked) =>
+               booked.book.googleId === checkoutRequest.book.googleId &&
+               booked.active  )){
+            throw {
                    thrown:true,
                    status: 404,
                    message: 'User has currently checked this book out'
@@ -130,10 +157,10 @@ class BookingService{
        // if book is in inventory
        const inventoriedBook = await dataAgent.
         inventoryDA.
-        getInventoryByGoogleId(checkoutRequest.book.id);
+        getInventoryByGoogleId(checkoutRequest.book.googleId);
 
       //check Waiting list
-      if(inventoriedBook && inventoriedBook.waitList.some( listed =>
+      if(inventoriedBook.some( (listed) =>
           listed.userId === profileResult.user.id ) ){
             throw {
                    thrown:true,
@@ -143,39 +170,56 @@ class BookingService{
        }
 
       //check if inventoried book exist is available
-      if(inventoriedBook){
-         if( !inventoriedBook.available){
-           let currentWaitTime =  Date.now() - inventoriedBook.booked.returnDate;
-           if(inventoriedBook.waitList.length>0){
-              currentWaitTime += inventoriedBook.waitList.length *
+      if(inventoriedBook.length>0){
+         if( !inventoriedBook[0].available){
+           let currentWaitTime =  Date.now() - inventoriedBook[0].booked.returnDate;
+           if(inventoriedBook[0].waitList.length>0){
+              currentWaitTime += inventoriedBook[0].waitList.length *
               borrowerRules.twoMinMS;
            }
            return {
-             bookId:inventoriedBook.bookGoogleId,
-             listPosition:inventoriedBook.waitList.length,
+             bookId:inventoriedBook[0].bookGoogleId,
+             listPosition:inventoriedBook[0].waitList.length,
              waitTime:currentWaitTime,
-             inventoriedId:inventoriedBook.id,
+             inventoriedId:inventoriedBook[0].id,
            }
          //if inventory exist and book is available
          }else{
-           const bookResult = await dataAgent.bookDA.getBookByGoogleId(checkoutRequest.book.id);
-           const  bookedUpdate  =  await prepareProfileData(
-              checkoutRequest, profileResult, bookResult, inventoriedBook);
-            return await updateUserProfile(checkoutRequest, profileResult, bookedUpdate)
+           const bookResult = await dataAgent.bookDA.getBookByGoogleId(checkoutRequest.book.googleId);
+           const  bookedUpdate  =  await createBookedData(
+              bookResult,
+              profileResult,
+              inventoriedBook[0],
+              false);
+            return await updateUserProfile(
+              bookResult,
+              profileResult,
+              bookedUpdate,
+              false)
          }
        //inventory does not exist
       }else{
         const bookResult = await dataAgent.bookDA.createNewBook(checkoutRequest.book);
-        const  bookedUpdate  =  await prepareProfileData(
-          checkoutRequest.book.id, profileResult, inventoriedBook);
-        return await updateUserProfile(checkoutRequest, profileResult, bookedUpdate)
+        let emptyInventory:IInventoryDocument =  <IInventoryDocument>({});
+        const bookedResult  =  await createBookedData(
+          bookResult,
+          profileResult,
+          emptyInventory,
+          false);
+
+        return await updateUserProfile(
+          bookResult,
+          profileResult,
+          bookedResult,
+          false)
       }
    }
 
    async  addUserToBookWaitList(waitListRequest:any):Promise<any>{
        //1 --  profile = get User Profile
      const bookResult = await dataAgent.bookDA.
-        getBookByGoogleId(waitListRequest.bookId)
+        getBookByGoogleId(waitListRequest.bookId);
+
      let profileResult:IProfileDocument = await dataAgent
          .profileDA
          .getProfileByUserId(waitListRequest.userId);
@@ -189,7 +233,7 @@ class BookingService{
               }
      }
        // -- if user currently has this booked checked out
-     if(profileResult.booksOut.some( booked =>
+     if(profileResult.booksOut.filter( (booked) =>
                booked.book.googleId === waitListRequest.bookId &&
                booked.active  ) ){
           throw {
@@ -202,17 +246,17 @@ class BookingService{
      const inventoriedBook = await dataAgent.
         inventoryDA.
         getInventoryByGoogleId(waitListRequest.bookId);
-     const updatedInventory =  await prepareProfileData(
-          waitListRequest.bookId,
+
+     const bookedResult =  await createBookedData(
+          bookResult,
           profileResult,
           inventoriedBook,
           true);
-     const emptyBookedData = <IBookedDocument>({});
 
      return await updateUserProfile(
           bookResult,
           profileResult,
-          emptyBookedData,
+          bookedResult,
           true)
    }
 }

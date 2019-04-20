@@ -1,6 +1,12 @@
 import { IProfileDocument } from '../data-abstracts/repositories/profile';
 import { ICommentResponse, IInventoryResponse, IMessageResponse, IUserResponse } from '../../service-layer/responses';
 import { IBookedResponse } from '../../service-layer/responses/booked/IBookedResponse';
+import { IUserDocument } from '../data-abstracts/repositories/user';
+import { Types } from "mongoose";
+import { ICommentDocument } from '../data-abstracts/repositories/comment';
+import { IMessageDocument } from '../data-abstracts/repositories/message';
+import { IBookedDocument } from '../data-abstracts/repositories/booked';
+import { IInventoryDocument } from '../data-abstracts/repositories/inventory';
 
 
 export class ProfileModel {

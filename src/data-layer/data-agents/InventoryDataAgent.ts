@@ -6,7 +6,7 @@ export class InventoryDataAgent{
 
   async createNewInventory(inventory:any):Promise<any> {
       let newInventory = <IInventoryDocument>(inventory);
-      let previousInventory =  await InventoryRepo.findOne({ bookGoogleId: inventory.book.id});
+      let previousInventory =  await InventoryRepo.findOne({ bookGoogleId: inventory.bookGoogleId});
       if(previousInventory){
          return  {thrown:true, success:false, status:409,  message: "inventory for this book was previously established"};
       }
@@ -43,7 +43,7 @@ export class InventoryDataAgent{
 
   async getInventoryByGoogleId(googleId):Promise<any>{
       let inventoryForBook =  await InventoryRepo.find({ "bookGoogleId" : googleId});
-      if(!inventoryForBook){
+      if(! inventoryForBook){
             return  {thrown:true, status:404,  message: "inventory does not exit for this book"};
       }
       return inventoryForBook;

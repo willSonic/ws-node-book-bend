@@ -8,10 +8,9 @@ import { logger } from '../../middleware/common/logging';
 import { IInventoryDocument } from '../data-abstracts/repositories/inventory';
 
 export class BookedExpireEventDataAgent{
-    async createBookedExpireEvent( bookedExpireEvent:any):Promise<any> {
-      let newBExpiredEvent = <IBookedExpireEventDocument>(bookedExpireEvent);
+    async createBookedExpireEvent( bookId:string):Promise<any> {
       let previousBExpiredEvent = BookedExpireEventRepo.findOne(
-        {bookedRef:bookedExpireEvent.bookedRef }
+        {booked:bookId }
         );
       if(previousBExpiredEvent){
          return  {  thrown:true,
@@ -20,7 +19,7 @@ export class BookedExpireEventDataAgent{
                     message: "BookedExpireEvent for this Booked  entity was previously established"
                     };
       }
-      let bookedExpireEventResult =  await BookedExpireEventRepo.create(newBExpiredEvent );
+      let bookedExpireEventResult =  await BookedExpireEventRepo.create({booked:bookId } );
       if(bookedExpireEventResult.errors){
           return  {thrown:true,
                    success:false,

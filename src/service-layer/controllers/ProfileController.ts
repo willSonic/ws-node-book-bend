@@ -21,9 +21,9 @@ export class ProfilesController extends Controller{
       @Header('x-access-token')  authentication: string ): Promise<IProfileResponse> {
        let userExist = await dataAgent.userDA.getUserById(request.user);
        if( userExist  &&   userExist.userName){
-             console.log( 'createNewProfile  userExist  = ', userExist)
+             console.log( 'createNewProfile  userExist  = ', userExist);
              let newProfileAttempt = await dataAgent.
-                profileDA.createNewProfile(request);
+                profileDA.createNewProfile(request.user);
              if(newProfileAttempt.id){
                  const newProfile = new ProfileModel(newProfileAttempt);
                  return <IProfileResponse>(newProfile);
@@ -31,8 +31,6 @@ export class ProfilesController extends Controller{
                 throw newProfileAttempt;
              }
        }else{
-
-          console.log( 'createNewProfile  errir  = ', userExist)
           if(userExist){
             throw userExist;
           }else{
@@ -51,7 +49,7 @@ export class ProfilesController extends Controller{
     public async GetProfileById(
       profileId: string, @Header('x-access-token')
       authentication: string ): Promise<IProfileResponse> {
-      console.log( 'GetProfileById  profileId  = ', profileId)
+      console.log( 'GetProfileById  profileId  = ', profileId);
        let profileResultById = await dataAgent.
           profileDA.getProfileById(profileId);
       console.log( 'GetProfileById  profileResultById  = ', profileResultById)
@@ -77,9 +75,8 @@ export class ProfilesController extends Controller{
       @Body() request:IProfileAddBookRequest,
       @Header('x-access-token')
       authentication: string ): Promise<IProfileAddBookResponse> {
-      console.log( 'AddBookRequest  request  = ', request)
-       const addRequestResult = await BookingServices.bookCheckOutService(request);
-       if(addRequestResult && !addRequestResult.error){
+      const addRequestResult = await BookingServices.bookCheckOutService(request);
+      if(addRequestResult && !addRequestResult.error){
           if(addRequestResult.hasOwnProperty('bookTitle')){
              return <IProfileAddBookResponse>({
                ...addRequestResult, isWaitListOption:true,

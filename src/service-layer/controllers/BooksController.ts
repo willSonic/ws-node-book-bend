@@ -17,7 +17,7 @@ export class BooksController extends Controller{
   public async CreateNewBook(
     @Body()  request:IBookCreateRequest,
     @Header('x-access-token') authentication: string ):Promise<IBookResponse>{
-     if( !request.userRef ){
+     if( !request.userId ){
        let result = await dataAgent.bookDA.createNewBook(request);
        if(result.id){
          return <IBookResponse>(new BookModel(result));

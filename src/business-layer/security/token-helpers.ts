@@ -12,7 +12,7 @@ const opts = {
 };
 
 
-function createJwtToken(userId:string, secret:string =opts.secretOrKey, expireTime:number =(60*60) ): string {
+function createJwtToken(userId:string, secret:string =opts.secretOrKey, expireTime:number =(8*60*60) ): string {
      var user = Object.assign({userId:userId});
      let token = jwt.sign(user, secret, {expiresIn: expireTime});
      return token;
@@ -23,6 +23,7 @@ function verifyToken(token:any, secret:string = opts.secretOrKey):any{
     try {
       return  jwt.verify(token, secret);
     } catch(err) {
+       console.log('token-helper.ts -- verifyToken = err ', err)
        return new Error('Unable to access data as user cannot be verified ');
      }
 }

@@ -4,5 +4,5 @@ import { IBookedDocument } from './IBookedDocument';
 export interface IBookedExpireEventDocument extends Document{
   id: string,
   booked:IBookedDocument,
-  createdAt: Date,
+  createdAt?: Date,
 }

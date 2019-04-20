@@ -8,44 +8,46 @@ import { logger } from '../../middleware/common/logging';
 
 export class ProfileDataAgent{
 
-  async createNewProfile(profile:any):Promise<any> {
-      let newProfile = <IProfileDocument>(profile);
-      let previousProfile =  await ProfileRepo.findOne({ user : newProfile.user});
+  async createNewProfile(userId:string):Promise<any> {
+      let previousProfile =  await ProfileRepo.findOne({ user : userId});
       if(previousProfile){
          return  {thrown:true, success:false, status:409,  message: "Profile has already been added"};
       }
-      let newProfileResult =  await ProfileRepo.create(newProfile);
-      if(newProfileResult.errors){
+      try{
+         let newProfileResult =  await ProfileRepo.create({ user : userId});
+         let newProfileWithSubs = await newProfileResult.populate('user')
+        .execPopulate();
+          return newProfileWithSubs;
+      }catch(error){
           return  {
             thrown:true,
             success:false,
             status:422,
-            message: "db is currently unable to insert new Profile request"};
+            message: "db is currently unable to insert new Profile request"
+         }
       }
-      return newProfileResult;
   }
-  async getProfileById(profileId:string):Promise<any> {
 
-      console.log('   --- getProfileById   profileId=',profileId)
-      let profile =  await ProfileRepo.find({ id : profileId})
+  async getProfileById(profileId:string):Promise<any> {
+   let profile =  await ProfileRepo.findById( profileId)
         .populate('user')
         .populate('messages')
         .populate('comments')
         .populate('booksOut')
         .populate('inventories');
-      console.log('   --- getProfileById   profile=',profile)
       if(!profile){
             return  {thrown:true, status:404,  message: "Profile for this User does not exit"};
       }
       return profile;
   }
   async getProfileByUserId(userId:string):Promise<any> {
-      let profile =  await ProfileRepo.find({ user : userId})
+      let profile =  await ProfileRepo.findOne({ user : userId})
         .populate('user')
         .populate('messages')
         .populate('comments')
-        .populate('bookedOut')
+        .populate('booksOut')
         .populate({ path:'inventories.waitList', match:{userId: {   $eq: userId} }});
+      console.log('ProfileDataAgenet ==   getProfileByUserId -profile =', profile)
       if(!profile){
             return  {thrown:true, status:404,  message: "Profile for this User does not exit"};
       }

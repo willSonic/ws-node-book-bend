@@ -1,15 +1,14 @@
 export interface IBookCreateRequest{
-  userRef?:string;
   googleId:string;
   authors: string[];
   averageRating?: number;
-  description: string ;
+  description?: string ;
   imageLinks?:  {};
-  pageCount: number;
+  pageCount?: number;
   subtitle?: string;
-  title: string;
-  categories: string[];
+  title?: string;
+  categories?: string[];
   ratingsCount?: number;
-  publishedDate: Date;
+  publishedDate?: Date;
   publisher: string;
 }

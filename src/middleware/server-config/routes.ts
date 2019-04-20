@@ -103,18 +103,17 @@ const models: TsoaRoute.Models = {
     },
     "IBookCreateRequest": {
         "properties": {
-            "userRef": { "dataType": "string" },
             "googleId": { "dataType": "string", "required": true },
             "authors": { "dataType": "array", "array": { "dataType": "string" }, "required": true },
             "averageRating": { "dataType": "double" },
-            "description": { "dataType": "string", "required": true },
+            "description": { "dataType": "string" },
             "imageLinks": { "dataType": "any" },
-            "pageCount": { "dataType": "double", "required": true },
+            "pageCount": { "dataType": "double" },
             "subtitle": { "dataType": "string" },
-            "title": { "dataType": "string", "required": true },
-            "categories": { "dataType": "array", "array": { "dataType": "string" }, "required": true },
+            "title": { "dataType": "string" },
+            "categories": { "dataType": "array", "array": { "dataType": "string" } },
             "ratingsCount": { "dataType": "double" },
-            "publishedDate": { "dataType": "datetime", "required": true },
+            "publishedDate": { "dataType": "datetime" },
             "publisher": { "dataType": "string", "required": true },
         },
     },
@@ -179,7 +178,7 @@ const models: TsoaRoute.Models = {
     "IProfileAddBookRequest": {
         "properties": {
             "userId": { "dataType": "string", "required": true },
-            "book": { "ref": "IBookResponse", "required": true },
+            "book": { "ref": "IBookCreateRequest", "required": true },
         },
     },
     "IProfileUpdateRequest": {
@@ -530,8 +529,8 @@ export function RegisterRoutes(app: express.Express) {
         function(request: any, response: any, next: any) {
             const args = {
                 request: { "in": "body", "name": "request", "required": true, "ref": "IProfileCreateRequest" },
+                authentication: { "in": "header", "name": "x-access-token", "required": true, "dataType": "string" },
             };
-            console.log('    ----/api/Profiles  request =', request)
 
             let validatedArgs: any[] = [];
             try {
@@ -567,7 +566,7 @@ export function RegisterRoutes(app: express.Express) {
             const promise = controller.GetProfileById.apply(controller, validatedArgs as any);
             promiseHandler(controller, promise, response, next);
         });
-    app.post('/api/Profiles',
+    app.post('/api/Profiles/addBook',
         authenticateMiddleware([{ "api_key": [] }]),
         function(request: any, response: any, next: any) {
             const args = {
@@ -579,7 +578,7 @@ export function RegisterRoutes(app: express.Express) {
             try {
                 validatedArgs = getValidatedArgs(args, request);
             } catch (err) {
-                return next(err);
+                 return next(err);
             }
 
             const controller = new ProfilesController();
