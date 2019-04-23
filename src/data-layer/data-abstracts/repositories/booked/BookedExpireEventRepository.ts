@@ -12,6 +12,7 @@ MongooseAccess.mongooseConnection.model<IBookedExpireEventDocument>
 
 
 BookedExpireEventRepo.watch().on('change', (change)=>{
+       console.log('BookExpireEventRepo   -- change.operationType === ', change.operationType );
     if(change.operationType === 'delete') {
         console.log('BookExpireEventRepo   -- change.documentKey._id =', change.documentKey._id);
         logger.info('BookExpireEventRepo   -- change.documentKey._id =', change.documentKey._id);

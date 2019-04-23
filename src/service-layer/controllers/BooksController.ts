@@ -13,23 +13,6 @@ import { logger } from '../../middleware/common/logging';
 @Route('Books')
 export class BooksController extends Controller{
   @Security('api_key')
-  @Post()
-  public async CreateNewBook(
-    @Body()  request:IBookCreateRequest,
-    @Header('x-access-token') authentication: string ):Promise<IBookResponse>{
-     if( !request.userId ){
-       let result = await dataAgent.bookDA.createNewBook(request);
-       if(result.id){
-         return <IBookResponse>(new BookModel(result));
-       }else{
-          throw result;
-       }
-     }else{
-
-     }
-  }
-
-  @Security('api_key')
   @Get('bookTitle/{title}')
   public async GetBookByTitle(
     @Path() title: string,

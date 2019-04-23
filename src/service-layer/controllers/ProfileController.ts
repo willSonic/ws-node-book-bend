@@ -94,7 +94,9 @@ export class ProfilesController extends Controller{
     @Security('api_key')
     @Put()
     public async UpdateProfile(
-      @Body() request: IProfileUpdateRequest ): Promise<IProfileResponse> {
+      @Body() request: IProfileUpdateRequest,
+      @Header('x-access-token') authentication: string
+       ): Promise<IProfileResponse> {
         let profileUpdateResult = await dataAgent.profileDA.updateProfile(request);
         if(profileUpdateResult.id){
                const aProfile = new ProfileModel(profileUpdateResult);

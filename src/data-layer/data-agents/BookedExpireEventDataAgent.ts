@@ -9,10 +9,10 @@ import { IInventoryDocument } from '../data-abstracts/repositories/inventory';
 
 export class BookedExpireEventDataAgent{
     async createBookedExpireEvent( bookId:string):Promise<any> {
-      let previousBExpiredEvent = BookedExpireEventRepo.findOne(
+      let previousBExpiredEvent = await BookedExpireEventRepo.findOne(
         {booked:bookId }
         );
-      if(previousBExpiredEvent){
+      if(previousBExpiredEvent && previousBExpiredEvent.id){
          return  {  thrown:true,
                     success:false,
                     status:409,
@@ -20,6 +20,7 @@ export class BookedExpireEventDataAgent{
                     };
       }
       let bookedExpireEventResult =  await BookedExpireEventRepo.create({booked:bookId } );
+
       if(bookedExpireEventResult.errors){
           return  {thrown:true,
                    success:false,

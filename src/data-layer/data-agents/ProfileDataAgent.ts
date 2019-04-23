@@ -33,7 +33,7 @@ export class ProfileDataAgent{
         .populate('user')
         .populate('messages')
         .populate('comments')
-        .populate('booksOut')
+        .populate({ path:'booksOut', populate:{ path:'book' }})
         .populate('inventories');
       if(!profile){
             return  {thrown:true, status:404,  message: "Profile for this User does not exit"};
@@ -45,7 +45,7 @@ export class ProfileDataAgent{
         .populate('user')
         .populate('messages')
         .populate('comments')
-        .populate('booksOut')
+        .populate({ path:'booksOut', populate:{ path:'book' }})
         .populate({ path:'inventories.waitList', match:{userId: {   $eq: userId} }});
       console.log('ProfileDataAgenet ==   getProfileByUserId -profile =', profile)
       if(!profile){
@@ -69,6 +69,11 @@ export class ProfileDataAgent{
               }
         });
       let savedResult = await resultProfileById.save();
+     savedResult = savedResult.populate('user')
+        .populate('messages')
+        .populate('comments')
+        .populate({ path:'booksOut', populate:{ path:'book' }})
+        .populate({ path:'inventories'});
       if(savedResult.errors){
           return  {status:422,  message: "db is currently unable to process request"};
       }

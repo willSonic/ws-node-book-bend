@@ -3,7 +3,6 @@ import { borrowerRules, messageTypes, createMessageText } from '../../business-l
 import { DataAgentServices as dataAgent } from '../../data-layer/data-agents';
 import { ProfileModel } from '../../data-layer/models';
 import { IBookDocument } from '../../data-layer/data-abstracts/repositories/book';
-import { IUserDocument } from '../../data-layer/data-abstracts/repositories/user';
 import { IProfileDocument } from '../../data-layer/data-abstracts/repositories/profile';
 import { IBookedDocument, IBookedExpireEventDocument } from '../../data-layer/data-abstracts/repositories/booked';
 import { IInventoryDocument } from '../../data-layer/data-abstracts/repositories/inventory';
@@ -13,7 +12,6 @@ async function updateUserProfile(
       profileResult:IProfileDocument,
       newBooked:IBookedDocument,
       waitList:boolean = false ):Promise<any>{
-
 
       const newMessageText = !waitList?
           createMessageText(messageTypes.BOOK_CHECKED_OUT,
@@ -26,7 +24,6 @@ async function updateUserProfile(
             {
                        bookTitle:book.title,
                     });
-      console.log(' --- updateUserProfile -- book =', book);
 
 
       const newMessage = await dataAgent.messageDA.createNewMessage({
@@ -61,7 +58,7 @@ async function updateUserProfile(
 }
 
 
-async function createBookedData(
+async function processCheckoutRequest(
       book:IBookDocument,
       profileResult:IProfileDocument,
       inventory:IInventoryDocument,
@@ -107,7 +104,7 @@ async function createBookedData(
                });
          }
 
-         //update entities
+         //Book can be checked
          return bookedResult;
      }else{
 
@@ -117,6 +114,8 @@ async function createBookedData(
         });
         const updateInventory =  await dataAgent.inventoryDA.
              updateInventory( inventory);
+
+         //User's request for book is on the wait list.
          return updateInventory;
      }
 
@@ -126,7 +125,7 @@ async function createBookedData(
 class BookingService{
    async bookCheckOutService( checkoutRequest:any):Promise<any>{
        //1 --  profile = get User Profile
-         console.log('createBookedData ---   checkoutRequest  =  ', checkoutRequest);
+         console.log('processCheckoutRequest ---   checkoutRequest  =  ', checkoutRequest);
       let profileResult:IProfileDocument = await dataAgent
          .profileDA
          .getProfileByUserId(checkoutRequest.userId);
@@ -186,7 +185,7 @@ class BookingService{
          //if inventory exist and book is available
          }else{
            const bookResult = await dataAgent.bookDA.getBookByGoogleId(checkoutRequest.book.googleId);
-           const  bookedUpdate  =  await createBookedData(
+           const  bookedUpdate  =  await processCheckoutRequest(
               bookResult,
               profileResult,
               inventoriedBook[0],
@@ -201,7 +200,7 @@ class BookingService{
       }else{
         const bookResult = await dataAgent.bookDA.createNewBook(checkoutRequest.book);
         let emptyInventory:IInventoryDocument =  <IInventoryDocument>({});
-        const bookedResult  =  await createBookedData(
+        const bookedResult  =  await processCheckoutRequest(
           bookResult,
           profileResult,
           emptyInventory,
@@ -247,7 +246,7 @@ class BookingService{
         inventoryDA.
         getInventoryByGoogleId(waitListRequest.bookId);
 
-     const bookedResult =  await createBookedData(
+     const bookedResult =  await processCheckoutRequest(
           bookResult,
           profileResult,
           inventoriedBook,

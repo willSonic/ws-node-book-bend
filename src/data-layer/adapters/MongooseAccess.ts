@@ -28,12 +28,12 @@ class MongooseAccess {
     this.mongooseInstance = Mongoose.connect(connectionString);
 
     this.mongooseConnection.on('connected', () => {
-      logger.info('Mongoose default connection open to ' +connectionString);
+     // logger.info('Mongoose default connection open to ' +connectionString);
     });
 
     // If the connection throws an error
     this.mongooseConnection.on('error', (msg) => {
-      logger.info('Mongoose default connection message:', msg);
+     // logger.info('Mongoose default connection message:', msg);
     });
 
     // When the connection is disconnected

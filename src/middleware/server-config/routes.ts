@@ -101,22 +101,6 @@ const models: TsoaRoute.Models = {
     },
     "ICommentResponses": {
     },
-    "IBookCreateRequest": {
-        "properties": {
-            "googleId": { "dataType": "string", "required": true },
-            "authors": { "dataType": "array", "array": { "dataType": "string" }, "required": true },
-            "averageRating": { "dataType": "double" },
-            "description": { "dataType": "string" },
-            "imageLinks": { "dataType": "any" },
-            "pageCount": { "dataType": "double" },
-            "subtitle": { "dataType": "string" },
-            "title": { "dataType": "string" },
-            "categories": { "dataType": "array", "array": { "dataType": "string" } },
-            "ratingsCount": { "dataType": "double" },
-            "publishedDate": { "dataType": "datetime" },
-            "publisher": { "dataType": "string", "required": true },
-        },
-    },
     "IMessageResponse": {
         "properties": {
             "id": { "dataType": "string", "required": true },
@@ -175,6 +159,22 @@ const models: TsoaRoute.Models = {
             "profile": { "ref": "IProfileResponse" },
         },
     },
+    "IBookCreateRequest": {
+        "properties": {
+            "googleId": { "dataType": "string", "required": true },
+            "authors": { "dataType": "array", "array": { "dataType": "string" }, "required": true },
+            "averageRating": { "dataType": "double" },
+            "description": { "dataType": "string" },
+            "imageLinks": { "dataType": "any" },
+            "pageCount": { "dataType": "double" },
+            "subtitle": { "dataType": "string" },
+            "title": { "dataType": "string" },
+            "categories": { "dataType": "array", "array": { "dataType": "string" } },
+            "ratingsCount": { "dataType": "double" },
+            "publishedDate": { "dataType": "datetime" },
+            "publisher": { "dataType": "string", "required": true },
+        },
+    },
     "IProfileAddBookRequest": {
         "properties": {
             "userId": { "dataType": "string", "required": true },
@@ -184,7 +184,7 @@ const models: TsoaRoute.Models = {
     "IProfileUpdateRequest": {
         "properties": {
             "id": { "dataType": "string", "required": true },
-            "user": { "ref": "IUserResponse", "required": true },
+            "user": { "ref": "IUserResponse" },
             "checkedOutCount": { "dataType": "double" },
             "waitListCount": { "dataType": "double" },
             "commentRefs": { "dataType": "array", "array": { "dataType": "string" } },
@@ -419,27 +419,6 @@ export function RegisterRoutes(app: express.Express) {
             const promise = controller.DeleteExistingCommentById.apply(controller, validatedArgs as any);
             promiseHandler(controller, promise, response, next);
         });
-    app.post('/api/Books',
-        authenticateMiddleware([{ "api_key": [] }]),
-        function(request: any, response: any, next: any) {
-            const args = {
-                request: { "in": "body", "name": "request", "required": true, "ref": "IBookCreateRequest" },
-                authentication: { "in": "header", "name": "x-access-token", "required": true, "dataType": "string" },
-            };
-
-            let validatedArgs: any[] = [];
-            try {
-                validatedArgs = getValidatedArgs(args, request);
-            } catch (err) {
-                return next(err);
-            }
-
-            const controller = new BooksController();
-
-
-            const promise = controller.CreateNewBook.apply(controller, validatedArgs as any);
-            promiseHandler(controller, promise, response, next);
-        });
     app.get('/api/Books/bookTitle/:title',
         authenticateMiddleware([{ "api_key": [] }]),
         function(request: any, response: any, next: any) {
@@ -578,7 +557,7 @@ export function RegisterRoutes(app: express.Express) {
             try {
                 validatedArgs = getValidatedArgs(args, request);
             } catch (err) {
-                 return next(err);
+                return next(err);
             }
 
             const controller = new ProfilesController();
@@ -592,6 +571,7 @@ export function RegisterRoutes(app: express.Express) {
         function(request: any, response: any, next: any) {
             const args = {
                 request: { "in": "body", "name": "request", "required": true, "ref": "IProfileUpdateRequest" },
+                authentication: { "in": "header", "name": "x-access-token", "required": true, "dataType": "string" },
             };
 
             let validatedArgs: any[] = [];

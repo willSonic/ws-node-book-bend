@@ -24,17 +24,19 @@ services:
         - "5858:5858"
 
   mongodb-primary:
-    image: 'bitnami/mongodb:4.1'
+    image: 'bitnami/mongodb:4.0'
     container_name: mongodb-primary
     environment:
       - MONGODB_REPLICA_SET_MODE=primary
+      - MONGODB_ADVERTISED_HOSTNAME=mongodb-primary
+      - MONGODB_REPLICA_SET_NAME=bookBinRS
     volumes:
-        - ../mongodb_master_data:/data/db
+        - "../mongodb_master_data:/bitnami:rw"
     ports:
         - "27017:27017"
 
   mongodb-secondary:
-    image: 'bitnami/mongodb:4.1'
+    image: 'bitnami/mongodb:4.0'
     container_name: mongodb-secondary
     depends_on:
       - mongodb-primary
@@ -43,11 +45,10 @@ services:
       - MONGODB_PRIMARY_HOST=mongodb-primary
       - MONGODB_PRIMARY_PORT_NUMBER=27017
       - MONGODB_ADVERTISED_HOSTNAME=mongodb-secondary
-    ports:
-      - "27018:27017"
+      - MONGODB_REPLICA_SET_NAME=bookBinRS
 
   mongodb-arbiter:
-    image: 'bitnami/mongodb:4.1'
+    image: 'bitnami/mongodb:4.0'
     container_name: mongodb-arbiter
     depends_on:
       - mongodb-primary
@@ -56,8 +57,7 @@ services:
       - MONGODB_PRIMARY_HOST=mongodb-primary
       - MONGODB_PRIMARY_PORT_NUMBER=27017
       - MONGODB_ADVERTISED_HOSTNAME=mongodb-arbiter
-    ports:
-      - "27019:27017"
+      - MONGODB_REPLICA_SET_NAME=bookBinRS
 
   redis:
     image: 'bitnami/redis:5.0'

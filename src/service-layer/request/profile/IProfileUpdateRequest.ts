@@ -3,7 +3,7 @@ import { ICommentResponse, IMessageResponse, IUserResponse } from '../../respons
 
 export interface IProfileUpdateRequest{
   id: string;
-  user:IUserResponse,
+  user?:IUserResponse,
   checkedOutCount?: number,
   waitListCount?: number ,
   commentRefs?:string[],
