@@ -5,6 +5,9 @@ all:
 CONTAINER_NAME = ws-node-book-bin-container
 IMAGE_NAME = local-ws-node-book-bin-dev
 
+MONGODB_PRIMARY = mongodb-primary
+
+
 build-clean:
 	rm -rf node_modules
 	rm -rf dist
@@ -48,3 +51,10 @@ logs:
 
 ssh-exec:
 	docker exec -it $(CONTAINER_NAME) sh
+
+mongo-dump-primary:
+	docker exec $(MONGODB_PRIMARY) sh -c 'mongodump --archive' > ../mongo-dump/db.dump
+
+
+mongo-restore-primary:
+	docker exec -i $(MONGODB_PRIMARY) sh -c 'mongorestore --archive' < ../mongo-dump/db.dump

@@ -1,5 +1,5 @@
 import { IProfileResponse } from '../responses';
-import { borrowerRules, messageTypes, createMessageText } from '../../business-layer/utils/bizRules';
+import { borrowerRules,getExpireTime, messageTypes, createMessageText } from '../../business-layer/utils/bizRules';
 import { DataAgentServices as dataAgent } from '../../data-layer/data-agents';
 import { ProfileModel } from '../../data-layer/models';
 import { IBookDocument } from '../../data-layer/data-abstracts/repositories/book';
@@ -131,14 +131,15 @@ class BookingService{
          .getProfileByUserId(checkoutRequest.userId);
 
        //2
-
-       console.log('BookingService --bookCheckOutService profileResult =  ', profileResult  )
        // -- if checkout count greater than max return
       if(profileResult.checkedOutCount === borrowerRules.maxCheckout ){
+         //TODO: should we create book and allow user to be place on waitlist
           throw {
                    thrown:true,
                    status: 404,
-                   message: 'User has checked out their maximum number of books allowed'
+                   message: 'User has checked out their maximum number'+
+                            ' of books allowed and can not be placed on'+
+                            ' wait list for this book'
               }
       }
        // -- if user currently has this booked checked out
@@ -173,8 +174,8 @@ class BookingService{
          if( !inventoriedBook[0].available){
            let currentWaitTime =  Date.now() - inventoriedBook[0].booked.returnDate;
            if(inventoriedBook[0].waitList.length>0){
-              currentWaitTime += inventoriedBook[0].waitList.length *
-              borrowerRules.twoMinMS;
+              const crntTTE:number =   getExpireTime();
+              currentWaitTime += inventoriedBook[0].waitList.length *crntTTE;
            }
            return {
              bookId:inventoriedBook[0].bookGoogleId,

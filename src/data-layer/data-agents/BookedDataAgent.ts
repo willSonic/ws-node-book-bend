@@ -4,7 +4,7 @@ import {
   IBookedDocument
 } from '../data-abstracts/repositories/booked';
 import { logger } from '../../middleware/common/logging';
-import { borrowerRules, createDate } from '../../business-layer/utils/bizRules';
+import { getExpireTime, createDate } from '../../business-layer/utils/bizRules';
 import { UserRepo } from '../data-abstracts/repositories/user';
 
 
@@ -18,7 +18,7 @@ export class BookedDataAgent{
         );
       if(previousBooked){
          previousBooked.active = true;
-         previousBooked.returnDate = createDate( borrowerRules.twoMinMS);
+         previousBooked.returnDate = createDate( getExpireTime() );
          previousBooked = await previousBooked.save();
          if(previousBooked.errors){
           return  {

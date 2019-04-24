@@ -1,6 +1,6 @@
 import { Schema } from "mongoose";
 import { IBookedDocument} from './IBookedDocument';
-import { borrowerRules, createDate } from '../../../../business-layer/utils/bizRules';
+import { getExpireTime, createDate } from '../../../../business-layer/utils/bizRules';
 
 /**
  * MongooseSchema
@@ -22,7 +22,7 @@ import { borrowerRules, createDate } from '../../../../business-layer/utils/bizR
 
   returnDate: {
       type: Date,
-      default: createDate(borrowerRules.twoMinMS),
+      default: createDate(getExpireTime()),
       required: true,
   },
 

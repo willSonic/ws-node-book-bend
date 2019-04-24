@@ -1,6 +1,6 @@
 import { Schema } from "mongoose";
 import { IBookedExpireEventDocument} from './IBookedExpireEventDocument';
-import { borrowerRules } from '../../../../business-layer/utils/bizRules';
+import { getExpireTime} from '../../../../business-layer/utils/bizRules';
 /**
  * MongooseSchema
  * @type {"mongoose".Schema}
@@ -23,7 +23,7 @@ import { borrowerRules } from '../../../../business-layer/utils/bizRules';
 
 BookedExpireEventSchema.index(
 {createdAt:1},
-{expireAfterSeconds: (borrowerRules.twoMinMS/1000) }
+{expireAfterSeconds: (getExpireTime()/1000) }
 );
 
 export { BookedExpireEventSchema };

@@ -16,6 +16,16 @@ redis:
     port: 6379
     urlDocker: 'redis://tokenholder'
 
+#    tenDayMS:7*24*60*60*1000,
+#    //dev fun 2Hours
+#    twoHrMS:2*60*60*1000,
+#    //dev fun 10 minutes
+#    tenMinMS:10*60*1000,
+#    //wait time for response from waitlist request
+#    twoMinMS: 2*60*1000,
+borrow_time:
+    ttE: 'twoHrMS'
+
 
 
 

@@ -1,7 +1,11 @@
+import * as config from 'config';
 
 export const borrowerRules = {
     // ten days
     tenDayMS:7*24*60*60*1000,
+
+    //dev fun 2Hours
+    twoHrMS:2*60*60*1000,
     //dev fun 10 minutes
     tenMinMS:10*60*1000,
     //wait time for response from waitlist request
@@ -11,6 +15,10 @@ export const borrowerRules = {
     //maximum inventory waitlists a user can subscribe to
     maxWaitlist:10
 
+};
+
+export function getExpireTime():number {
+    return borrowerRules[ `${config.get('borrow_time.ttE')}` ];
 };
 
 export const createDate = ( time:number ) =>{
