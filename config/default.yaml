@@ -16,6 +16,9 @@ redis:
     port: 6379
     urlDocker: 'redis://tokenholder'
 
+waitlist_opp:
+    TTE: 60 #seconds
+
 #    tenDayMS:7*24*60*60*1000,
 #    //dev fun 2Hours
 #    twoHrMS:2*60*60*1000,

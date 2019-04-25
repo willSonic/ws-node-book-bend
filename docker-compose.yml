@@ -60,6 +60,7 @@ services:
       - MONGODB_REPLICA_SET_NAME=bookBinRS
 
   redis:
+    container_name: tokenholder
     image: 'bitnami/redis:5.0'
     environment:
       - ALLOW_EMPTY_PASSWORD=yes

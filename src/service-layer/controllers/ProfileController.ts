@@ -3,16 +3,19 @@ import { validate} from "class-validator";
 
 import { IProfileAddBookRequest, IProfileCreateRequest, IProfileUpdateRequest } from '../request/index';
 import { IProfileResponse, IErrorResponse, IProfileAddBookResponse } from '../responses/index';
-import { createJwtToken } from '../../business-layer/security/token-helpers';
+import { createJwtToken, addTemporaryToken } from '../../business-layer/security/token-helpers';
+import { CookieSerializeOptions, serialize, parse  } from 'cookie';
 import { ProfileModel } from '../../data-layer/models/ProfileModel';
 import { DataAgentServices as dataAgent } from '../../data-layer/data-agents';
 import { BookingServices } from '../aggregates/bookingServices';
 import { logger } from '../../middleware/common/logging';
+import * as config from '../../business-layer/security/token-helpers';
 
 
 
 @Route('Profiles')
 export class ProfilesController extends Controller{
+    private cookies = {};
 
     @Security('api_key')
     @Post()
@@ -77,7 +80,14 @@ export class ProfilesController extends Controller{
       authentication: string ): Promise<IProfileAddBookResponse> {
       const addRequestResult = await BookingServices.bookCheckOutService(request);
       if(addRequestResult && !addRequestResult.error){
-          if(addRequestResult.hasOwnProperty('bookTitle')){
+          if(addRequestResult.hasOwnProperty('waitTime')){
+             // set up session
+             const tempCookie =  await addTemporaryToken(
+                 addRequestResult.userId,
+                 addRequestResult.inventoriedId
+             );
+
+             this.setHeader("Set-Cookie", tempCookie);
              return <IProfileAddBookResponse>({
                ...addRequestResult, isWaitListOption:true,
              })

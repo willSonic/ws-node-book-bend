@@ -6,6 +6,7 @@ CONTAINER_NAME = ws-node-book-bin-container
 IMAGE_NAME = local-ws-node-book-bin-dev
 
 MONGODB_PRIMARY = mongodb-primary
+REDIS_DB_CONTAINER = tokenholder
 
 
 build-clean:
@@ -58,3 +59,6 @@ mongo-dump-primary:
 
 mongo-restore-primary:
 	docker exec -i $(MONGODB_PRIMARY) sh -c 'mongorestore --archive' < ../mongo-dump/db.dump
+
+redis-cli:
+	docker exec -it  $(REDIS_DB_CONTAINER) redis-cli

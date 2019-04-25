@@ -20,16 +20,14 @@ class RedisAccess {
 
             let redisOptions = config.get('redis');
 
+            //
+            // this.redisClient.once('ready', () => {
+            //    logger.info('Client connect to an redis is opened.');
+            //  });
 
-            this.redisClient.once('ready', () => {
-               logger.info('Client connect to an redis is opened.');
-             });
 
-
-            this.redisClient =   new  IORedis({
-                          host:config.get('redis.urlDocker').toString(),
-                          port: Number(config.get('redis.port')),
-            } );
+            this.redisClient =   new  IORedis(config.get('redis.port'),
+                      config.get('redis.urlDocker').toString() );
 
             this.redisInstance = this.redisClient;
 
@@ -70,5 +68,5 @@ class RedisAccess {
      }
 }
 
-
+const redisAccess = new RedisAccess();
 export { RedisAccess }

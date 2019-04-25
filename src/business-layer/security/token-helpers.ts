@@ -4,6 +4,7 @@ import { UserModel } from '../../data-layer/models/UserModel';
 import { RedisAccess } from '../../data-layer/adapters/RedisAccess';
 import * as jwt from 'jsonwebtoken';
 import { logger } from '../../middleware/common/logging';
+import { serialize } from 'cookie';
 
 
 const opts = {
@@ -29,9 +30,10 @@ function verifyToken(token:any, secret:string = opts.secretOrKey):any{
 }
 
 async function verifyTwoMinToken( userId:string, token:any): Promise<Boolean>  {
+     const userTmpId = userId +'_2min';
     if(verifyToken(token,opts.tempSecretOrKey)){
-       const result  = await RedisAccess.redisInstance.get(token);
-       if(result === userId){
+       const result  = await RedisAccess.redisClient.hmget(userTmpId);
+       if(result.userId === userTmpId){
         return Boolean(true)
        }else{
         return Boolean(false)
@@ -44,19 +46,35 @@ async function verifyTwoMinToken( userId:string, token:any): Promise<Boolean>  {
 
 
 
-async function  addTemporaryToken( userId:string): Promise<any>  {
-     let twoMinToken = createJwtToken(userId, opts.tempSecretOrKey, (60*2) );
-     let isOK = await RedisAccess.redisInstance.set( twoMinToken, userId, 'ex', 175 );
-     return {
-         success:isOK ==="OK",
-         token:twoMinToken
+async function  addTemporaryToken( userId:string, inventoryId:string): Promise<any>  {
+     const userTmpId = userId +'_2min';
+     const expireTime = Number(config.get('waitlist_opp.TTE'));
+     const twoMinToken = createJwtToken(userTmpId, opts.tempSecretOrKey, expireTime);
+     const hashData = {token: twoMinToken, userId:userTmpId, inventoryId:inventoryId};
+     const isOK = await RedisAccess.redisClient.hmset( userTmpId, hashData);
+     const didSetExp = await RedisAccess.redisClient.expire( userTmpId, expireTime);
+     if(isOK.toString() === 'OK' && didSetExp===1){
+          return serialize('wl2min',
+                      String(twoMinToken), {
+                            path: '/',
+                            httpOnly: true,
+                            maxAge: expireTime
+                      });
+      }else{
+         return {
+            thrown:true,
+            success:false,
+            status:500,
+            message: "unable to process request for waitlist token"
+            };
       }
 }
 
 
-async function deleteTemporaryToken( token:any){
-     let deleteCount = await RedisAccess.redisInstance.del(token);
+async function deleteTemporaryToken( userId:string){
+     const userTmpId = userId +'_2min';
+     let deleteCount = await RedisAccess.redisClient.del(userTmpId);
 }
 
 
-export {createJwtToken, verifyToken, addTemporaryToken}
+export {createJwtToken, verifyToken, addTemporaryToken, verifyTwoMinToken}

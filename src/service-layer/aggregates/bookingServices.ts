@@ -178,6 +178,7 @@ class BookingService{
               currentWaitTime += inventoriedBook[0].waitList.length *crntTTE;
            }
            return {
+             userId:profileResult.user.id,
              bookId:inventoriedBook[0].bookGoogleId,
              listPosition:inventoriedBook[0].waitList.length,
              waitTime:currentWaitTime,
