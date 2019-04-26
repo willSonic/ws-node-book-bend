@@ -102,6 +102,34 @@ export class ProfilesController extends Controller{
     }
 
     @Security('api_key')
+    @Post("/addToWaitList")
+    public async AddUserToWaitlist(
+      @Body() request:IProfileAddBookRequest,
+      @Header('x-access-token')
+      authentication: string ): Promise<IProfileAddBookResponse> {
+      const addRequestResult = await BookingServices.bookCheckOutService(request);
+      if(addRequestResult && !addRequestResult.error){
+          if(addRequestResult.hasOwnProperty('waitTime')){
+             // set up session
+             const tempCookie =  await addTemporaryToken(
+                 addRequestResult.userId,
+                 addRequestResult.inventoriedId
+             );
+             this.getHeader
+             this.setHeader("Set-Cookie", tempCookie);
+             return <IProfileAddBookResponse>({
+               ...addRequestResult, isWaitListOption:true,
+             })
+           }else{
+             return <IProfileAddBookResponse>({
+               profile:addRequestResult, isWaitListOption:false,
+             })
+           }
+       }else{
+           throw addRequestResult;
+       }
+    }
+    @Security('api_key')
     @Put()
     public async UpdateProfile(
       @Body() request: IProfileUpdateRequest,

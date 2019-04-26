@@ -566,6 +566,27 @@ export function RegisterRoutes(app: express.Express) {
             const promise = controller.AddBookRequest.apply(controller, validatedArgs as any);
             promiseHandler(controller, promise, response, next);
         });
+    app.post('/api/Profiles/addToWaitList',
+        authenticateMiddleware([{ "api_key": [] }]),
+        function(request: any, response: any, next: any) {
+            const args = {
+                request: { "in": "body", "name": "request", "required": true, "ref": "IProfileAddBookRequest" },
+                authentication: { "in": "header", "name": "x-access-token", "required": true, "dataType": "string" },
+            };
+
+            let validatedArgs: any[] = [];
+            try {
+                validatedArgs = getValidatedArgs(args, request);
+            } catch (err) {
+                return next(err);
+            }
+
+            const controller = new ProfilesController();
+
+
+            const promise = controller.AddUserToWaitlist.apply(controller, validatedArgs as any);
+            promiseHandler(controller, promise, response, next);
+        });
     app.put('/api/Profiles',
         authenticateMiddleware([{ "api_key": [] }]),
         function(request: any, response: any, next: any) {
