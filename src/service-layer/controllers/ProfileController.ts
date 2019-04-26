@@ -115,7 +115,6 @@ export class ProfilesController extends Controller{
                  addRequestResult.userId,
                  addRequestResult.inventoriedId
              );
-             this.getHeader
              this.setHeader("Set-Cookie", tempCookie);
              return <IProfileAddBookResponse>({
                ...addRequestResult, isWaitListOption:true,
