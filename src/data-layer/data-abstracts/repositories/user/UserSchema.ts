@@ -83,7 +83,7 @@ UserSchema.pre("save", function (next : any) {
 
 
 
-UserSchema.method('comparePassword', _comparePassword)
+UserSchema.method('comparePassword', _comparePassword);
 
 
 async function _comparePassword(candidatePassword:string, user): Promise<any> {

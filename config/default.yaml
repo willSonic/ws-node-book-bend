@@ -8,7 +8,7 @@ auth:
     jwt_short_time_secret: 'M@S0m3NU$'
 
 mongo:
-    urlClient: 'mongodb://127.0.0.1:27017/book-bin'
+    urlClient: 'mongodb://127.0.0.1:27017/book-bin?replicaSet=bookBinRS'
     urlDocker: 'mongodb://mongodb-primary:27017/book-bin?replicaSet=bookBinRS'
 
 redis:
