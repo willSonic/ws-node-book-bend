@@ -1,31 +1,26 @@
-import mongoose = require('mongoose');
 import {
   BookedExpireEventRepo,
   IBookedExpireEventDocument,
   } from '../data-abstracts/repositories/booked';
 
 import { logger } from '../../middleware/common/logging';
-import { IInventoryDocument } from '../data-abstracts/repositories/inventory';
+import {
+  NotFound_404,
+  Conflict_409,
+  Unprocessable_422,
+} from '../../business-layer/utils/errors/ApplicationError';
 
 export class BookedExpireEventDataAgent{
-    async createBookedExpireEvent( bookId:string):Promise<any> {
+    async createBookedExpireEvent( bookedId:string):Promise<any> {
       let previousBExpiredEvent = await BookedExpireEventRepo.findOne(
-        {booked:bookId }
+        {booked:bookedId }
         );
       if(previousBExpiredEvent && previousBExpiredEvent.id){
-         return  {  thrown:true,
-                    success:false,
-                    status:409,
-                    message: "BookedExpireEvent for this Booked  entity was previously established"
-                    };
+         throw  new  Conflict_409( `A BookedExpireEvent for this Booked with id ${bookedId} entity was previously established!`)
       }
-      let bookedExpireEventResult =  await BookedExpireEventRepo.create({booked:bookId } );
-
+      let bookedExpireEventResult =  await BookedExpireEventRepo.create({booked:bookedId } );
       if(bookedExpireEventResult.errors){
-          return  {thrown:true,
-                   success:false,
-                   status:422,
-                   message: "db is currently unable to process BookedExpireEventRepo create request"};
+          throw new Unprocessable_422("The DataBase currently unable to process BookedExpireEventRepo create request");
       }
       return bookedExpireEventResult
     }

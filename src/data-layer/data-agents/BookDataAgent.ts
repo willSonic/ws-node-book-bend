@@ -1,36 +1,33 @@
-import mongoose = require('mongoose');
 import { BookRepo, BookSchema, IBookDocument} from '../data-abstracts/repositories/book';
+import  {
+    Unprocessable_422,
+    Conflict_409,
+    NotFound_404,
+
+} from '../../business-layer/utils/errors/ApplicationError';
+
 import { logger } from '../../middleware/common/logging';
 
 
 export class BookDataAgent{
-
   async createNewBook(book:any):Promise<any> {
       let newBook = <IBookDocument>(book);
       let previousBook =  await BookRepo.findOne({ googleId : newBook.id});
       if(previousBook){
-         return  {thrown:true, success:false, status:409,  message: "book was previously created"};
+         throw new Conflict_409(`A book with an id of ${book.googleId} previously created!`)
       }
       let newBookResult =  await BookRepo.create(newBook);
       if(newBookResult.errors){
-          return  {
-            thrown:true,
-            success:false,
-            status:422,
-            message: "db is currently unable to insert new Book request"
-            };
+          throw new Unprocessable_422("The DataBase is currently unable to insert new Book request");
       }
       return newBookResult;
   }
 
   async getBookByTitle(title:string):Promise<any> {
       let book =  await BookRepo.find({ title : title});
+
       if(!book){
-            return  {
-              thrown:true,
-              status:404,
-              message: "title does not exit"
-            };
+         throw  new  NotFound_404(`There is no book present with a title ${ title }!`);
       }
       return book;
   }
@@ -38,45 +35,23 @@ export class BookDataAgent{
   async getBookByGoogleId( googleId:string):Promise<any>{
       let book =  await BookRepo.findOne({ googleId : googleId});
       if(!book){
-            return  {status:401,  message: "incorrect googleId for Book"};
+         throw  new  NotFound_404( `There is no book present with a googleId, of${ googleId }!`);
       }
       return book;
   }
 
   async getBookById( bookId:string):Promise<any>{
-      let objectId = mongoose.Types.ObjectId;
-      if(! objectId.isValid(bookId)){
-            return  {status:401,  message: "incorrect book id"};
-      }
-      console.info('BookDataAgent-- getBookById - bookId =', bookId)
       let bookResult = await BookRepo.findById(bookId);
-      if(bookResult.errors){
-          return  {
-            thrown:true,
-            status:422,
-            message: "db is currently  unable to process Book find by Id request"
-            };
-
+      if(!bookResult){
+         throw  new  NotFound_404( `There is no book present with an id, of ${bookId}!`)
       }
       return bookResult;
   }
 
   async deleteExistingBook(bookId:string):Promise<any> {
-      let objectId = mongoose.Types.ObjectId;
-      if(! objectId.isValid(bookId)){
-            return  {
-             thrown:true,
-              status:401,
-              message: "incorrect book id"
-              };
-      }
       let deleteBookResult = await BookRepo.findByIdAndRemove(bookId);
       if(deleteBookResult.errors){
-          return  {
-           thrown:true,
-           success:false,
-           status:422,
-           message: "db is currently unable to process this Book delete request"};
+          throw new Unprocessable_422("The DataBase is currently unable complete Book delete request");
       }
       return deleteBookResult;
   }

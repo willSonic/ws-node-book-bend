@@ -4,7 +4,7 @@ import { IUserResponse, ISuccessResponse }  from '../responses';
 import { createJwtToken } from '../../business-layer/security/token-helpers';
 import { UserModel } from '../../data-layer/models/UserModel';
 import { logger } from '../../middleware/common/logging';
-import { DataAgentServices as dataAgent } from '../../data-layer/data-agents';
+import { DataAgentServices as dataAgent } from '../../data-layer/data-agents/DataAgentServices';
 
 
 @Route('Authorizations')
@@ -13,16 +13,10 @@ export class AuthorizationsController extends Controller {
 
   @Post('Login')
   public async login(@Body() request: IUserLoginRequest): Promise<IUserResponse> {
-
       let result = await dataAgent.userDA.getAuthorizedUser(request);
-      if(result.id){
-               var authedUser = new UserModel(result);
-               let loginResult = Object.assign({account:{ user:authedUser.getClientUserModel(),  token:createJwtToken( result.id) } });
-               var aUser = <IUserResponse>(loginResult);
-               return aUser;
-       }else{
-          throw result;
-       }
+      const authedUser = new UserModel(result);
+      const loginResult = Object.assign({account:{ user:authedUser.getClientUserModel(),  token:createJwtToken( result.id) } });
+      return <IUserResponse>(loginResult);
   }
 
   @Post('Logout')

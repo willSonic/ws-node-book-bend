@@ -3,7 +3,7 @@ import { Route, Response, Get, Post, Patch, Header, Body, Security, Controller, 
 import { ICommentCreateRequest, ICommentUpdateRequest } from '../request';
 import { ICommentResponse, ICommentResponses, IErrorResponse } from '../responses';
 import { CommentModel } from '../../data-layer/models/CommentModel';
-import { DataAgentServices as dataAgent } from '../../data-layer/data-agents';
+import { DataAgentServices as dataAgent } from '../../data-layer/data-agents/DataAgentServices';
 import { logger } from '../../middleware/common/logging';
 
 @Route('Comments')

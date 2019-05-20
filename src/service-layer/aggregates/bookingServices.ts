@@ -1,6 +1,6 @@
 import { IProfileResponse } from '../responses';
 import { borrowerRules,getExpireTime, messageTypes, createMessageText } from '../../business-layer/utils/bizRules';
-import { DataAgentServices as dataAgent } from '../../data-layer/data-agents';
+import { DataAgentServices as dataAgent } from '../../data-layer/data-agents/DataAgentServices';
 import { ProfileModel } from '../../data-layer/models';
 import { IBookDocument } from '../../data-layer/data-abstracts/repositories/book';
 import { IProfileDocument } from '../../data-layer/data-abstracts/repositories/profile';

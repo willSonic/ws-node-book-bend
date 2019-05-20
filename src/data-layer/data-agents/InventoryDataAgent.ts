@@ -1,6 +1,6 @@
-import mongoose = require('mongoose');
 import { InventoryRepo, IInventoryDocument} from '../data-abstracts/repositories/inventory';
 import { logger } from '../../middleware/common/logging';
+import { Conflict_409, NotFound_404, Unprocessable_422 } from '../../business-layer/utils/errors/ApplicationError';
 
 export class InventoryDataAgent{
 
@@ -8,24 +8,19 @@ export class InventoryDataAgent{
       let newInventory = <IInventoryDocument>(inventory);
       let previousInventory =  await InventoryRepo.findOne({ bookGoogleId: inventory.bookGoogleId});
       if(previousInventory){
-         return  {thrown:true, success:false, status:409,  message: "inventory for this book was previously established"};
+         throw  new  Conflict_409( `An Inventory with a googleId ${inventory.bookGoogleId} was previously established!`);
       }
       let newInventoryResult =  await InventoryRepo.create(newInventory);
       if(newInventoryResult.errors){
-          return  {thrown:true, success:false,  status:422,  message: "db is currently unable to process request"};
+          throw new Unprocessable_422(`The DataBase is unable to process an Inventory create request`);
       }
       return newInventoryResult;
   }
 
  async updateInventory(inventory:any):Promise<any> {
-      let objectId = mongoose.Types.ObjectId;
-      if(! objectId.isValid(inventory.id)){
-            return  {thrown:true, status:401,  message: "incorrect inventory id"};
-      }
-
       let updatedInventory = await InventoryRepo.findById(inventory.id);
       if(!updatedInventory){
-         return  {thrown:true, status:409,  message: "an inventory for the book ref does does not exist"};
+          throw new Conflict_409(`Can not update Inventory id ${inventory.id } as it does not exist`);
       }
       Object.keys( updatedInventory).forEach(item =>{
               if(inventory[item] && inventory[item] !== undefined){
@@ -34,9 +29,8 @@ export class InventoryDataAgent{
         });
       let savedResult = await updatedInventory.save();
       if(savedResult.errors){
-          return  {status:422,  message: "db is currently unable to process request"};
+          throw new Unprocessable_422(`The DataBase is unable to update Inventory with id ${inventory.id} request`);
       }
-
       return savedResult;
   }
 
@@ -44,7 +38,7 @@ export class InventoryDataAgent{
   async getInventoryByGoogleId(googleId):Promise<any>{
       let inventoryForBook =  await InventoryRepo.find({ "bookGoogleId" : googleId});
       if(! inventoryForBook){
-            return  {thrown:true, status:404,  message: "inventory does not exit for this book"};
+          throw new NotFound_404(`An Inventory with goolgeId of ${googleId } does not currently exist`);
       }
       return inventoryForBook;
 
@@ -53,7 +47,7 @@ export class InventoryDataAgent{
   async getInventoryByBookRef(bookRef:string):Promise<any> {
       let inventoryForBook =  await InventoryRepo.findOne({ bookRef : bookRef});
       if(!inventoryForBook){
-            return  {thrown:true, status:404,  message: "inventory does not exit for this book"};
+          throw new NotFound_404(`An Inventory with a bookRef of ${bookRef } does not currently exist`);
       }
       return inventoryForBook;
   }
@@ -61,13 +55,9 @@ export class InventoryDataAgent{
 
 
   async deleteInventory(inventoryId:string):Promise<any> {
-      let objectId = mongoose.Types.ObjectId;
-      if(! objectId.isValid(inventoryId)){
-            return  {thrown:true, status:401,  message: "incorrect inventory id"};
-      }
       let deleteInventoryResult = await InventoryRepo.findByIdAndRemove(inventoryId);
       if(deleteInventoryResult.errors){
-          return  {status:422,  message: "db is currently unable to process request"};
+          throw new Unprocessable_422(`The DataBase is unable to process Inventory with id ${inventoryId} delete request`);
       }
       return deleteInventoryResult;
   }

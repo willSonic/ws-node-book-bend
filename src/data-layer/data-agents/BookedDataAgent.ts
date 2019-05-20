@@ -1,11 +1,11 @@
-import mongoose = require('mongoose');
 import {
   BookedRepo,
   IBookedDocument
 } from '../data-abstracts/repositories/booked';
 import { logger } from '../../middleware/common/logging';
-import { getExpireTime, createDate } from '../../business-layer/utils/bizRules';
 import { UserRepo } from '../data-abstracts/repositories/user';
+import { getExpireTime, createDate } from '../../business-layer/utils/bizRules';
+import { Conflict_409, NotFound_404, Unprocessable_422 } from '../../business-layer/utils/errors/ApplicationError';
 
 
 export class BookedDataAgent{
@@ -21,34 +21,22 @@ export class BookedDataAgent{
          previousBooked.returnDate = createDate( getExpireTime() );
          previousBooked = await previousBooked.save();
          if(previousBooked.errors){
-          return  {
-             thrown:true,
-             status:422,
-             message: "db is currently save Update to previous Booked request"};
-         }
+             throw new Unprocessable_422("The DataBase is unable to create(update)  Booked request");
+          }
          return previousBooked;
       }
 
       let newBookedResult =  await BookedRepo.create(newBooked);
       if(newBookedResult.errors){
-          return  {
-            thrown:true,
-            success:false,
-            status:422,
-            message: "db is currently unable to insert new Booked request"
-            };
+             throw new Unprocessable_422("The DataBase is unable to create Booked request");
       }
       return newBookedResult;
   }
 
   async updateBooked(booked:any):Promise<any>{
-      let objectId = mongoose.Types.ObjectId;
-      if(! objectId.isValid(booked.id)){
-            return  {thrown:true, status:401,  message: "incorrect booked id"};
-      }
       let resultBookedById = await BookedRepo.findById(booked.id);
       if(!resultBookedById){
-         return  {thrown:true, status:409,  message: "this booked record does not exist"};
+         throw new Conflict_409(`A booked record  with an id of ${booked.id} does not exist!`);
       }
 
       Object.keys( resultBookedById).forEach(item =>{
@@ -57,25 +45,17 @@ export class BookedDataAgent{
               }
         });
       let savedResult = await resultBookedById.save();
+
       if(savedResult.errors){
-          return  {status:422,  message: "db is currently unable to process request"};
+         throw  new  Unprocessable_422( `The DataBase is unable to update Booked record with an id of ${booked.id}`);
       }
       return savedResult;
   }
 
   async getBookedById( bookedId:string):Promise<any>{
-      let objectId = mongoose.Types.ObjectId;
-      if(! objectId.isValid(bookedId)){
-            return  {status:401,  message: "incorrect bookedId id"};
-      }
       let bookedResult = await BookedRepo.findById(bookedId);
       if(bookedResult.errors){
-          return  {
-            thrown:true,
-            status:422,
-            message: "db is currently  unable to process Booked find by Id request"
-            };
-
+          throw new Unprocessable_422(`The DataBase is unable to update Booked record with an id of ${bookedId}`);
       }
       return bookedResult;
   }
@@ -83,11 +63,7 @@ export class BookedDataAgent{
   async getBookedByUserRef(userRef:string):Promise<any> {
       let userBookRefs =  await BookedRepo.find({ userRef : userRef});
       if(!userBookRefs){
-            return  {
-              thrown:true,
-              status:404,
-              message: "User does not have any Booked "
-            };
+         throw  new  NotFound_404( `A User with an id of  ${userRef} does not have any Booked instances!`)
       }
       return userBookRefs;
   }
@@ -95,10 +71,9 @@ export class BookedDataAgent{
   async getBookedByBookRef( bookRef:string):Promise<any>{
       let booked =  await BookedRepo.findOne({ bookRef : bookRef});
       if(!booked){
-            return  {status:401,  message: "incorrect Booked"};
+         throw  new  NotFound_404( ` A Booked record with an id of ${bookRef} does not have existed!`);
       }
       return booked;
   }
-
 
 }

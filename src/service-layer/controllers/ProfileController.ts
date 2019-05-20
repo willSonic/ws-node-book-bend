@@ -6,7 +6,7 @@ import { IProfileResponse, IErrorResponse, IProfileAddBookResponse } from '../re
 import { createJwtToken, addTemporaryToken } from '../../business-layer/security/token-helpers';
 import { CookieSerializeOptions, serialize, parse  } from 'cookie';
 import { ProfileModel } from '../../data-layer/models/ProfileModel';
-import { DataAgentServices as dataAgent } from '../../data-layer/data-agents';
+import { DataAgentServices as dataAgent } from '../../data-layer/data-agents/DataAgentServices';
 import { BookingServices } from '../aggregates/bookingServices';
 import { logger } from '../../middleware/common/logging';
 import * as config from '../../business-layer/security/token-helpers';

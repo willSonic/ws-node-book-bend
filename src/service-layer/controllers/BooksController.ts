@@ -6,7 +6,7 @@ Delete, Path } from 'tsoa';
 import { IBookCreateRequest } from '../request';
 import { IBookResponse, IErrorResponse, IUserResponse } from '../responses';
 import { BookModel } from '../../data-layer/models/BookModel';
-import { DataAgentServices as dataAgent } from '../../data-layer/data-agents';
+import { DataAgentServices as dataAgent } from '../../data-layer/data-agents/DataAgentServices';
 import { logger } from '../../middleware/common/logging';
 
 

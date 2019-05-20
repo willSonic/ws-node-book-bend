@@ -1,9 +1,9 @@
-import mongoose = require('mongoose');
 import {
  ProfileRepo,
  IProfileDocument
  } from '../data-abstracts/repositories/profile';
 import { logger } from '../../middleware/common/logging';
+import { Conflict_409, NotFound_404, Unprocessable_422 } from '../../business-layer/utils/errors/ApplicationError';
 
 
 export class ProfileDataAgent{
@@ -11,7 +11,7 @@ export class ProfileDataAgent{
   async createNewProfile(userId:string):Promise<any> {
       let previousProfile =  await ProfileRepo.findOne({ user : userId});
       if(previousProfile){
-         return  {thrown:true, success:false, status:409,  message: "Profile has already been added"};
+         throw  new  Conflict_409( `A new Profile can be created because User with an id ${userId} does not exist!`);
       }
       try{
          let newProfileResult =  await ProfileRepo.create({ user : userId});
@@ -19,12 +19,7 @@ export class ProfileDataAgent{
         .execPopulate();
           return newProfileWithSubs;
       }catch(error){
-          return  {
-            thrown:true,
-            success:false,
-            status:422,
-            message: "db is currently unable to insert new Profile request"
-         }
+          throw new Unprocessable_422(`The DataBase is unable to create a new Profile`);
       }
   }
 
@@ -36,7 +31,7 @@ export class ProfileDataAgent{
         .populate({ path:'booksOut', populate:{ path:'book' }})
         .populate('inventories');
       if(!profile){
-            return  {thrown:true, status:404,  message: "Profile for this User does not exit"};
+         throw  new  NotFound_404( `A Profile with an id ${profileId}  does not exist!`);
       }
       return profile;
   }
@@ -47,21 +42,16 @@ export class ProfileDataAgent{
         .populate('comments')
         .populate({ path:'booksOut', populate:{ path:'book' }})
         .populate({ path:'inventories.waitList', match:{userId: {   $eq: userId} }});
-      console.log('ProfileDataAgenet ==   getProfileByUserId -profile =', profile)
       if(!profile){
-            return  {thrown:true, status:404,  message: "Profile for this User does not exit"};
+         throw  new  NotFound_404( `A Profile with user id ${userId} entity does not exist!`);
       }
       return profile;
   }
 
   async updateProfile(profile:any):Promise<any> {
-      let objectId = mongoose.Types.ObjectId;
-      if(! objectId.isValid(profile.id)){
-            return  {thrown:true, status:401,  message: "incorrect profiled id"};
-      }
       let resultProfileById = await ProfileRepo.findById(profile.id);
       if(!resultProfileById){
-         return  {thrown:true, status:409,  message: "this user Profile does not exist"};
+         throw  new  NotFound_404( `A Profile with id ${profile.id} entity does not exist!`);
       }
       Object.keys( resultProfileById).forEach(item =>{
               if(profile[item] && profile[item] !== undefined){
@@ -75,27 +65,15 @@ export class ProfileDataAgent{
         .populate({ path:'booksOut', populate:{ path:'book' }})
         .populate({ path:'inventories'});
       if(savedResult.errors){
-          return  {status:422,  message: "db is currently unable to process request"};
+          throw new Unprocessable_422(`The DataBase is unable to update a Profile with id ${profile.id}`);
       }
 
       return savedResult;
   }
   async deleteExistingProfile(profileId:string):Promise<any> {
-      let objectId = mongoose.Types.ObjectId;
-      if(! objectId.isValid(profileId)){
-            return  {
-               thrown:true,
-               status:401,
-               message: "incorrect profile id"
-             };
-      }
       let deleteProfileResult = await ProfileRepo.findByIdAndRemove(profileId);
       if(deleteProfileResult.errors){
-          return  {
-           thrown:true,
-           success:false,
-           status:422,
-            message: "db is currently unable to process Profile delete request"};
+          throw new Unprocessable_422(`The DataBase is unable to process Profile with id ${profileId} delete request`);
       }
       return deleteProfileResult;
   }
